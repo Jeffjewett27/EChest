@@ -20,8 +20,9 @@ namespace EChestVC.Directory
             }
         }
 
-        public VersionDataProxy(string hash, DirectoryStructure directory) : base(null, hash)
+        public VersionDataProxy(string hash, DirectoryStructure directory) : base(null, null, hash)
         {
+            this.directory = directory;
         }
         
         private void Load()

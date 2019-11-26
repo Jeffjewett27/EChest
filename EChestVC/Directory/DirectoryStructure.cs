@@ -5,6 +5,8 @@ using System.IO;
 using System.Text.Json;
 using EChestVC.Model;
 using EChestVC.Directory.JSON;
+using EChestVC.Directory.Load;
+using Version = EChestVC.Model.Version;
 
 namespace EChestVC.Directory
 {
@@ -67,6 +69,28 @@ namespace EChestVC.Directory
         }
 
         public VersionData GetVersionData(string hash)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Constructs a Version object from the specified hash, including all filenames
+        /// </summary>
+        /// <param name="hash">The hash identifier of the version</param>
+        /// <param name="loadData">If true, will load VersionData objects instead of proxies</param>
+        /// <returns></returns>
+        public Version GetVersion(string hash, bool loadData = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Constructs a Version object from the specified hash, and stores proxies with a changelog dependency
+        /// </summary>
+        /// <param name="hash"></param>
+        /// <param name="changelog"></param>
+        /// <returns></returns>
+        public Version GetVersion(string hash, Changelog changelog)
         {
             throw new NotImplementedException();
         }

@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
-using EChestVC.Model;
 using System.Linq;
+using EChestVC.Model;
+using EChestVC.Directory.Load;
+using Version = EChestVC.Model.Version;
 
 namespace EChestVC.Directory.JSON
 {
@@ -20,24 +22,33 @@ namespace EChestVC.Directory.JSON
             Hash = commit.Hash;
             Parents = commit.Parents.Select(p => p.Hash).ToArray();
             Changelog = commit.Changelog.Hash;
-            Version = commit.VersionData.Hash;
+            Version = commit.Version.Hash;
             Metadata = new CommitMetadataJSON(commit.Metadata);
         }
 
-        public Commit GetCommit(DirectoryStructure directory, bool loadParents = false, bool loadChangelog = false, bool loadVersion = false)
+        public Commit GetCommit(DirectoryStructure directory, CommitDependencyLoader loader)
         {
-            Func<string, Commit> parentFunc = loadParents ? (Func<string, Commit>)
+            Func<string, Commit> parentFunc = loader.LoadParents ? (Func<string, Commit>)
                 (p => directory.GetCommit(p)) : 
                 (p => new CommitProxy(p, directory));
             Commit[] parents = Parents.Select(parentFunc).ToArray();
 
-            Changelog changelog = loadChangelog ?
+            Changelog changelog = loader.LoadChangelog ?
                 directory.GetChangelog(Changelog) :
                 new ChangelogProxy(Changelog, directory);
 
-            VersionData version = loadVersion ?
-                directory.GetVersionData(Hash) :
-                new VersionDataProxy(Version, directory);
+            Version version = loader.LoadVersion ?
+                directory.GetVersion(Hash, loader.LoadVersionData) :
+                new VersionProxy(Version, directory);
+
+            return new Commit(parents, changelog, version, Metadata.GetMetadata(), Hash);
+        }
+
+        public Commit GetCommit(DirectoryStructure directory)
+        {
+            Commit[] parents = Parents.Select(p => new CommitProxy(p, directory)).ToArray();
+            Changelog changelog = new ChangelogProxy(Changelog, directory);
+            Version version = new VersionProxy(Version, directory);
 
             return new Commit(parents, changelog, version, Metadata.GetMetadata(), Hash);
         }

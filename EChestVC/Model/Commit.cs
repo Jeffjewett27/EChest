@@ -10,7 +10,7 @@ namespace EChestVC.Model
     class Commit
     {
         private readonly string commitHash;
-        private readonly VersionData version;
+        private readonly Version version;
         private readonly Commit[] parents;
         private readonly Changelog changelog;
         private readonly CommitMetadata metadata;
@@ -20,10 +20,10 @@ namespace EChestVC.Model
         public virtual CommitMetadata Metadata => metadata;
         public virtual Changelog Changelog => changelog;
         public virtual Commit[] Parents => parents;
-        public virtual VersionData VersionData => version;
+        public virtual Version Version => version;
         public bool IsNull => isNull;
 
-        public Commit(Commit[] parents, Changelog changelog, VersionData version, CommitMetadata metadata)
+        public Commit(Commit[] parents, Changelog changelog, Version version, CommitMetadata metadata)
         {
             if (changelog.IsEmpty)
             {
@@ -36,7 +36,7 @@ namespace EChestVC.Model
             GenerateHash();
         }
 
-        public Commit(Commit[] parents, Changelog changelog, VersionData version, CommitMetadata metadata, string hash)
+        public Commit(Commit[] parents, Changelog changelog, Version version, CommitMetadata metadata, string hash)
         {
             if (changelog.IsEmpty)
             {

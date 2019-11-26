@@ -62,22 +62,22 @@ namespace EChestVC.Model
         {
             foreach (var add in changelog.Added)
             {
-                if (added.ContainsKey(add))
+                if (added.ContainsKey(add.Key))
                 {
-                    added[add] = hash;
+                    added[add.Key] = hash;
                 }
-                else if (removed.Contains(add))
+                else if (removed.Contains(add.Key))
                 {
-                    modified.Add(add, hash);
-                    removed.Remove(add);
+                    modified.Add(add.Key, hash);
+                    removed.Remove(add.Key);
                 }
-                else if (modified.ContainsKey(add))
+                else if (modified.ContainsKey(add.Key))
                 {
                     throw new FormatException("Attempted to add an existing and modified file");
                 }
                 else
                 {
-                    added.Add(add, hash);
+                    added.Add(add.Key, hash);
                 }
             }
         }
@@ -91,21 +91,21 @@ namespace EChestVC.Model
         {
             foreach (var mod in changelog.Modified)
             {
-                if (added.ContainsKey(mod))
+                if (added.ContainsKey(mod.Key))
                 {
-                    added[mod] = hash;
+                    added[mod.Key] = hash;
                 }
-                else if (removed.Contains(mod))
+                else if (removed.Contains(mod.Key))
                 {
                     throw new FormatException("Attempted to modify a removed file");
                 }
-                else if (modified.ContainsKey(mod))
+                else if (modified.ContainsKey(mod.Key))
                 {
-                    added[mod] = hash;
+                    added[mod.Key] = hash;
                 }
                 else
                 {
-                    modified.Add(mod, hash);
+                    modified.Add(mod.Key, hash);
                 }
             }
         }

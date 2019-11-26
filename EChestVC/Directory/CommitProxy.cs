@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using EChestVC.Model;
+using Version = EChestVC.Model.Version;
 
 namespace EChestVC.Directory
 {
@@ -13,7 +14,7 @@ namespace EChestVC.Directory
         public override Changelog Changelog => commit.Changelog;
         public override CommitMetadata Metadata => commit.Metadata;
         public override Commit[] Parents => commit.Parents;
-        public override VersionData VersionData => commit.VersionData;
+        public override Version Version => commit.Version;
 
         public CommitProxy(string hash, DirectoryStructure directory) : base(null, null, null, null, hash)
         {

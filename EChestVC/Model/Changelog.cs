@@ -13,21 +13,21 @@ namespace EChestVC.Model
             Removed,
             Renamed
         }
-        private HashSet<string> modified;
-        private HashSet<string> added;
+        private Dictionary<string, string> modified;
+        private Dictionary<string, string> added;
         private HashSet<string> removed;
         private Dictionary<string, string> renamed;
         private string hash;
         private bool isEmpty;
 
-        public virtual HashSet<string> Modified { get => modified; }
-        public virtual HashSet<string> Added { get => added; }
+        public virtual Dictionary<string, string> Modified { get => modified; }
+        public virtual Dictionary<string, string> Added { get => added; }
         public virtual HashSet<string> Removed { get => removed; }
         public virtual Dictionary<string, string> Renamed { get => renamed; }
         public string Hash { get => hash; }
         public bool IsEmpty { get => isEmpty; }
 
-        public Changelog(HashSet<string> m, HashSet<string> a, HashSet<string> rem, Dictionary<string, string> ren)
+        public Changelog(Dictionary<string, string> m, Dictionary<string, string> a, HashSet<string> rem, Dictionary<string, string> ren)
         {
             modified = m;
             added = a;
@@ -36,7 +36,7 @@ namespace EChestVC.Model
             hash = GetHash();
         }
 
-        public Changelog(HashSet<string> m, HashSet<string> a, HashSet<string> rem, Dictionary<string, string> ren, string hash)
+        public Changelog(Dictionary<string, string> m, Dictionary<string, string> a, HashSet<string> rem, Dictionary<string, string> ren, string hash)
         {
             modified = m;
             added = a;
@@ -47,8 +47,8 @@ namespace EChestVC.Model
 
         protected Changelog(string hash)
         {
-            modified = new HashSet<string>();
-            added = new HashSet<string>();
+            modified = new Dictionary<string, string>();
+            added = new Dictionary<string, string>();
             removed = new HashSet<string>();
             renamed = new Dictionary<string, string>();
             this.hash = hash;
@@ -71,32 +71,32 @@ namespace EChestVC.Model
 
         public static Changelog Add(Changelog one, Changelog two)
         {
-            HashSet<string> mod = new HashSet<string>();
-            foreach (string m in one.modified)
+            Dictionary<string, string> mod = new Dictionary<string, string>();
+            foreach (var m in one.modified)
             {
-                mod.Add(m);
+                mod.Add(m.Key, m.Value);
             }
-            foreach (string m in two.modified)
+            foreach (var m in two.modified)
             {
-                mod.Add(m);
+                mod.Add(m.Key, m.Value);
             }
-            HashSet<string> add = new HashSet<string>();
-            foreach (string a in one.added)
+            Dictionary<string, string> add = new Dictionary<string, string>();
+            foreach (var a in one.added)
             {
-                add.Add(a);
+                add.Add(a.Key, a.Value);
             }
-            foreach (string a in two.added)
+            foreach (var a in two.added)
             {
-                add.Add(a);
+                add.Add(a.Key, a.Value);
             }
             HashSet<string> rem = new HashSet<string>();
             foreach (string r in one.removed)
             {
-                add.Add(r);
+                rem.Add(r);
             }
             foreach (string r in two.removed)
             {
-                add.Add(r);
+                rem.Add(r);
             }
             Dictionary<string, string> ren = new Dictionary<string, string>();
             foreach (var keyValue in one.renamed)
