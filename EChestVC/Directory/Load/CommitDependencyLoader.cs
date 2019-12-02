@@ -4,12 +4,18 @@ using System.Text;
 
 namespace EChestVC.Directory.Load
 {
-    struct CommitDependencyLoader
+    /// <summary>
+    /// An object containing information on which dependencies a commit should be loaded with
+    /// </summary>
+    class CommitDependencyLoader
     {
+        private const string defaultKey = "default";
+
         private bool loadParents;
         private bool loadChangelog;
         private bool loadVersion;
         private bool loadVersionData;
+        private Dictionary<string, CommitDependencyLoader> parents;
 
         public bool LoadParents { get => loadParents; set => loadParents = value; }
         public bool LoadChangelog { get => loadChangelog; set => loadChangelog = value; }
@@ -19,6 +25,29 @@ namespace EChestVC.Directory.Load
         public static CommitDependencyLoader Default()
         {
             return new CommitDependencyLoader();
+        }
+
+        public CommitDependencyLoader GetParent(string hash)
+        {
+            if (parents.TryGetValue(hash, out CommitDependencyLoader parent))
+            {
+                return parent;
+            } else if (parents.TryGetValue(defaultKey, out parent))
+            {
+                return parent;
+            } else
+            {
+                return Default();
+            }
+        }
+
+        public bool ShouldLoadParent(string hash)
+        {
+            if (hash == defaultKey)
+            {
+                return false;
+            }
+            return parents.ContainsKey(hash);
         }
     }
 }

@@ -25,47 +25,13 @@ namespace EChestVC.Directory
         public Changelog GetChangelog(string hash)
         {
             string filepath = Path.Combine(path, CHANGELOG_PATH, hash + CHANGELOG_EXT);
-            string json;
-            ChangelogJSON changelog;
-            try
-            {
-                json = File.ReadAllText(filepath);
-            } catch
-            {
-                throw new ArgumentException("Could not read file " + filepath);
-            }
-            try
-            {
-                changelog = JsonSerializer.Deserialize<ChangelogJSON>(json);
-            } catch
-            {
-                throw new FormatException("Could not deserialize " + filepath);
-            }
-            return changelog.GetChangelog(this);
+            return ChangelogFileManager.LoadChangelog(filepath, this);
         }
 
-        public Commit GetCommit(string hash)
+        public Commit GetCommit(string hash, CommitDependencyLoader loader = null)
         {
             string filepath = Path.Combine(path, COMMIT_PATH, hash + COMMIT_EXT);
-            string json;
-            CommitJSON commit;
-            try
-            {
-                json = File.ReadAllText(filepath);
-            }
-            catch
-            {
-                throw new ArgumentException("Could not read file " + filepath);
-            }
-            try
-            {
-                commit = JsonSerializer.Deserialize<CommitJSON>(json);
-            }
-            catch
-            {
-                throw new FormatException("Could not deserialize " + filepath);
-            }
-            return commit.GetCommit(this);
+            return CommitFileManager.LoadCommit(filepath, this, loader);
         }
 
         public VersionData GetVersionData(string hash)

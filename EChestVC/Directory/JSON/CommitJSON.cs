@@ -28,10 +28,18 @@ namespace EChestVC.Directory.JSON
 
         public Commit GetCommit(DirectoryStructure directory, CommitDependencyLoader loader)
         {
-            Func<string, Commit> parentFunc = loader.LoadParents ? (Func<string, Commit>)
-                (p => directory.GetCommit(p)) : 
-                (p => new CommitProxy(p, directory));
-            Commit[] parents = Parents.Select(parentFunc).ToArray();
+            Commit[] parents = new Commit[Parents.Length];
+            for (int i = 0; i < parents.Length; i++)
+            {
+                string p = Parents[i];
+                if (loader.LoadParents && loader.ShouldLoadParent(p))
+                {
+                    parents[i] = directory.GetCommit(p, loader.GetParent(p));
+                } else
+                {
+                    parents[i] = new CommitProxy(p, directory);
+                }
+            }
 
             Changelog changelog = loader.LoadChangelog ?
                 directory.GetChangelog(Changelog) :
