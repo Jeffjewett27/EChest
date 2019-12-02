@@ -10,6 +10,7 @@ namespace EChestVC.Directory
     {
         private VersionData data;
         private DirectoryStructure directory;
+        private bool hasHash;
 
         public override StreamReader Data
         {
@@ -20,11 +21,29 @@ namespace EChestVC.Directory
             }
         }
 
-        public VersionDataProxy(string hash, DirectoryStructure directory) : base(null, null, hash)
+        public override string Hash
+        {
+            get
+            {
+                if (!hasHash) Load();
+                if (data == null)
+                    return base.Hash;
+                else
+                    return data.Hash;
+            }
+        }
+
+        public VersionDataProxy(string filepath, FileType filetype, DirectoryStructure directory) : base(null, filepath, filetype)
         {
             this.directory = directory;
         }
-        
+
+        public VersionDataProxy(string filepath, FileType filetype, DirectoryStructure directory, string hash) : base(null, filepath, filetype, hash)
+        {
+            this.directory = directory;
+            hasHash = true;
+        }
+
         private void Load()
         {
             data = directory.GetVersionData(Hash);

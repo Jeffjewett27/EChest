@@ -34,9 +34,9 @@ namespace EChestVC.Directory
             return CommitFileManager.LoadCommit(filepath, this, loader);
         }
 
-        public VersionData GetVersionData(string hash)
+        public VersionData GetVersionData(string dirpath, string filepath, VersionData.FileType filetype)
         {
-            throw new NotImplementedException();
+            return VersionDataFileManager.LoadVersionData(dirpath, filepath, filetype);
         }
 
         /// <summary>
@@ -47,7 +47,8 @@ namespace EChestVC.Directory
         /// <returns></returns>
         public Version GetVersion(string hash, bool loadData = false)
         {
-            throw new NotImplementedException();
+            string filepath = Path.Combine(path, VERSION_PATH, hash);
+            return VersionFileManager.LoadVersion(hash, filepath, this, loadData);
         }
 
         /// <summary>
@@ -58,7 +59,8 @@ namespace EChestVC.Directory
         /// <returns></returns>
         public Version GetVersion(string hash, Changelog changelog)
         {
-            throw new NotImplementedException();
+            string filepath = Path.Combine(path, VERSION_PATH, hash);
+            return VersionFileManager.LoadVersion(hash, filepath, this, false, changelog);
         }
     }
 }
