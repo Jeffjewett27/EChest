@@ -5,7 +5,7 @@ using System.Text;
 
 namespace EChestVC.Model
 {
-    class VersionData
+    public class VersionData
     {
         public enum FileType
         {

@@ -30,7 +30,11 @@ namespace EChestVC.Directory
         {
             get
             {
-                if (!hasHash) Load();
+                if (!hasHash)
+                {
+                    Load();
+                    hasHash = true;
+                }
                 if (data == null)
                     return base.Hash;
                 else
@@ -48,7 +52,7 @@ namespace EChestVC.Directory
             return new VersionDataProxy(versionHash, filepath, (StreamReader)null, directory, hash);
         }
 
-        private VersionDataProxy(string versionHash, string filepath, StreamReader data, DirectoryStructure directory) : base(filepath, data)
+        private VersionDataProxy(string versionHash, string filepath, StreamReader data, DirectoryStructure directory) : base(filepath, data, "")
         {
             this.directory = directory;
             this.versionHash = versionHash;

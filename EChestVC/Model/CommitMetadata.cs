@@ -4,7 +4,7 @@ using System.Text;
 
 namespace EChestVC.Model
 {
-    class CommitMetadata
+    public class CommitMetadata
     {
         public string GetHash()
         {

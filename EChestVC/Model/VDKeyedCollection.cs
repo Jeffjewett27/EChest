@@ -5,7 +5,7 @@ using System.Text;
 
 namespace EChestVC.Model
 {
-    class VDKeyedCollection : KeyedCollection<string, VersionData>
+    public class VDKeyedCollection : KeyedCollection<string, VersionData>
     {
         public VDKeyedCollection()
             : base(null, 0)

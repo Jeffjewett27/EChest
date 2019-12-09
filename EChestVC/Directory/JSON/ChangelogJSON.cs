@@ -1,18 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json;
 using EChestVC.Model;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace EChestVC.Directory.JSON
 {
     class ChangelogJSON
     {
-        public string Hash { get; }
-        public string[][] Added { get; }
-        public string[][] Modified { get; }
-        public string[] Removed { get; }
-        public string[][] Renamed { get; }
+        public string Hash { get; set; }
+        public string[][] Added { get; set; }
+        public string[][] Modified { get; set; }
+        public string[] Removed { get; set; }
+        public string[][] Renamed { get; set; }
+
+        public ChangelogJSON()
+        {
+
+        }
 
         public ChangelogJSON(Changelog changelog)
         {
@@ -31,13 +38,41 @@ namespace EChestVC.Directory.JSON
 
         public Changelog GetChangelog(DirectoryStructure directory)
         {
-            var addedVals = from r in Added select new KeyValuePair<string, string>(r[0], r[1]);
-            var added = new Dictionary<string, string>(addedVals);
-            var modifiedVals = from r in Modified select new KeyValuePair<string, string>(r[0], r[1]);
-            var modified = new Dictionary<string, string>(modifiedVals);
-            var removed = new HashSet<string>(Removed);
-            var renamedVals = from r in Renamed select new KeyValuePair<string, string>(r[0], r[1]);
-            var renamed = new Dictionary<string, string>(renamedVals);
+            Dictionary<string, string> added;
+            Dictionary<string, string> modified;
+            HashSet<string> removed;
+            Dictionary<string, string> renamed;
+            if (Added != null)
+            {
+                var addedVals = from r in Added select new KeyValuePair<string, string>(r[0], r[1]);
+                added = new Dictionary<string, string>(addedVals);
+            } else
+            {
+                added = new Dictionary<string, string>();
+            }
+            if (Modified != null)
+            {
+                var modifiedVals = from r in Modified select new KeyValuePair<string, string>(r[0], r[1]);
+                modified = new Dictionary<string, string>(modifiedVals);
+            } else
+            {
+                modified = new Dictionary<string, string>();
+            }
+            if (Removed != null)
+            {
+                removed = new HashSet<string>(Removed);
+            } else
+            {
+                removed = new HashSet<string>();
+            }
+            if (Renamed != null)
+            {
+                var renamedVals = from r in Renamed select new KeyValuePair<string, string>(r[0], r[1]);
+                renamed = new Dictionary<string, string>(renamedVals);
+            } else
+            {
+                renamed = new Dictionary<string, string>();
+            }
             return new Changelog(modified, added, removed, renamed, Hash);
         }
     }

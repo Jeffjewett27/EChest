@@ -7,7 +7,7 @@ namespace EChestVC.Directory.Load
     /// <summary>
     /// An object containing information on which dependencies a commit should be loaded with
     /// </summary>
-    class CommitDependencyLoader
+    public class CommitDependencyLoader
     {
         private const string defaultKey = "default";
 

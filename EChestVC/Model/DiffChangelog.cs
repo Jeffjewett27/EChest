@@ -4,7 +4,7 @@ using System.Text;
 
 namespace EChestVC.Model
 {
-    class DiffChangelog
+    public class DiffChangelog
     {
         private Changelog common;
         private Changelog[] conflicts;

@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using System.Text.Json;
 using EChestVC.Model;
-using EChestVC.Directory.JSON;
 using EChestVC.Directory.Load;
 using Version = EChestVC.Model.Version;
 
@@ -13,7 +11,7 @@ namespace EChestVC.Directory
     /// <summary>
     /// Manages the file operations within a EChestVC project
     /// </summary>
-    class DirectoryStructure
+    public class DirectoryStructure
     {
         private const string CHANGELOG_PATH = "Changelogs";
         private const string VERSION_PATH = "Versions";
@@ -21,6 +19,11 @@ namespace EChestVC.Directory
         private const string CHANGELOG_EXT = ".json";
         private const string COMMIT_EXT = ".json";
         private readonly string path;
+
+        public DirectoryStructure(string path)
+        {
+            this.path = path;
+        }
 
         public Changelog GetChangelog(string hash)
         {

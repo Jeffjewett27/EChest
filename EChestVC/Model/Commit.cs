@@ -7,7 +7,7 @@ namespace EChestVC.Model
     /// <summary>
     /// Represents a single node in the version tree. Contains metadata, parent commits, changelog, and a hash
     /// </summary>
-    class Commit
+    public class Commit
     {
         private readonly string commitHash;
         private readonly Version version;

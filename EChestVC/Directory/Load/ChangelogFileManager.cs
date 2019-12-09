@@ -22,9 +22,10 @@ namespace EChestVC.Directory.Load
             {
                 throw new ArgumentException("Could not read file " + filepath);
             }
+            changelog = JsonSerializer.Deserialize<ChangelogJSON>(json);
             try
             {
-                changelog = JsonSerializer.Deserialize<ChangelogJSON>(json);
+                
             }
             catch
             {

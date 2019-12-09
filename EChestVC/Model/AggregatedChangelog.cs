@@ -7,7 +7,7 @@ namespace EChestVC.Model
     /// <summary>
     /// Represents an aggregation of changelogs down a branch of commits. Stores information about which commits files are located in.
     /// </summary>
-    class AggregatedChangelog
+    public class AggregatedChangelog
     {
         private Dictionary<string, string> modified; //file->hash
         private Dictionary<string, string> added; //file->hash

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace EChestVC.Model
 {
-    class Version
+    public class Version
     {
         private VersionData data;
         private string hash;

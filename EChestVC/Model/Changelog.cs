@@ -4,7 +4,7 @@ using System.Text;
 
 namespace EChestVC.Model
 {
-    class Changelog
+    public class Changelog
     {
         public enum Type
         {

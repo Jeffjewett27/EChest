@@ -15,14 +15,14 @@ namespace EChestVC.Directory
             changelog = null;
         }
 
-        public override HashSet<string> Added { get
+        public override Dictionary<string, string> Added { get
             {
                 if (changelog == null) Load();
                 return changelog.Added;
             }
         }
 
-        public override HashSet<string> Modified
+        public override Dictionary<string, string> Modified
         {
             get
             {
