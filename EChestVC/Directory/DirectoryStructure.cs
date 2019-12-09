@@ -34,9 +34,10 @@ namespace EChestVC.Directory
             return CommitFileManager.LoadCommit(filepath, this, loader);
         }
 
-        public VersionData GetVersionData(string dirpath, string filepath, VersionData.FileType filetype)
+        public VersionData GetVersionData(string versionHash, string filepath, bool loadData, DirectoryStructure directory, Changelog changelog = null)
         {
-            return VersionDataFileManager.LoadVersionData(dirpath, filepath, filetype);
+            string dirPath = Path.Combine(path, VERSION_PATH, versionHash);
+            return VersionDataFileManager.LoadVersionData(dirPath, filepath, loadData, directory, changelog);
         }
 
         /// <summary>

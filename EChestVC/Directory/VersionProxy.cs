@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 using EChestVC.Model;
-using EChestVC.HelperFunctions;
 using Version = EChestVC.Model.Version;
 
 namespace EChestVC.Directory
@@ -13,12 +12,12 @@ namespace EChestVC.Directory
         private DirectoryStructure directory;
         private Changelog changelog;
 
-        public override GenericKeyedCollection<string, VersionData> Files
+        public override VersionData Data
         {
             get
             {
                 if (version == null) Load();
-                return version.Files;
+                return version.Data;
             }
         }
 
@@ -30,7 +29,13 @@ namespace EChestVC.Directory
 
         private void Load()
         {
-            version = directory.GetVersion(Hash);
+            if (changelog == null)
+            {
+                version = directory.GetVersion(Hash);
+            } else
+            {
+                version = directory.GetVersion(Hash, changelog);
+            }
         }
     }
 }

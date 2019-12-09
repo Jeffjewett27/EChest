@@ -114,5 +114,19 @@ namespace EChestVC.Model
         {
             throw new NotImplementedException();
         }
+
+        public virtual string GetCachedHash(string filepath)
+        {
+            if (Added.TryGetValue(filepath, out string hash))
+            {
+                return hash;
+            } else if (Modified.TryGetValue(filepath, out hash))
+            {
+                return hash;
+            } else
+            {
+                throw new ArgumentException("Path " + filepath + " is not cached");
+            }
+        }
     }
 }

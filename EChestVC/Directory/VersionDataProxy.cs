@@ -6,17 +6,22 @@ using EChestVC.Model;
 
 namespace EChestVC.Directory
 {
+    /// <summary>
+    /// Represents a proxy for versiondata with Filetype FileType.File
+    /// </summary>
     class VersionDataProxy : VersionData
     {
         private VersionData data;
-        private DirectoryStructure directory;
+        private readonly DirectoryStructure directory;
         private bool hasHash;
+        private string versionHash;
 
         public override StreamReader Data
         {
             get
             {
-                if (data == null) Load();
+                if (data == null) 
+                    Load();
                 return data.Data;
             }
         }
@@ -32,21 +37,33 @@ namespace EChestVC.Directory
                     return data.Hash;
             }
         }
-
-        public VersionDataProxy(string filepath, FileType filetype, DirectoryStructure directory) : base(null, filepath, filetype)
+        
+        public static VersionDataProxy Create(string versionHash, string filepath, DirectoryStructure directory)
         {
-            this.directory = directory;
+            return new VersionDataProxy(versionHash, filepath, (StreamReader)null, directory);
         }
 
-        public VersionDataProxy(string filepath, FileType filetype, DirectoryStructure directory, string hash) : base(null, filepath, filetype, hash)
+        public static VersionDataProxy Create(string versionHash, string filepath, DirectoryStructure directory, string hash)
+        {
+            return new VersionDataProxy(versionHash, filepath, (StreamReader)null, directory, hash);
+        }
+
+        private VersionDataProxy(string versionHash, string filepath, StreamReader data, DirectoryStructure directory) : base(filepath, data)
+        {
+            this.directory = directory;
+            this.versionHash = versionHash;
+        }
+
+        private VersionDataProxy(string versionHash, string filepath, StreamReader data, DirectoryStructure directory, string hash) : base(filepath, data, hash)
         {
             this.directory = directory;
             hasHash = true;
+            this.versionHash = versionHash;
         }
 
         private void Load()
         {
-            data = directory.GetVersionData(Hash);
+            data = directory.GetVersionData(versionHash, Filename, true, directory);
         }
     }
 }

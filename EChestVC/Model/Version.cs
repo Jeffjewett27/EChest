@@ -1,33 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using EChestVC.HelperFunctions;
 
 namespace EChestVC.Model
 {
     class Version
     {
-        private GenericKeyedCollection<string, VersionData> files;
+        private VersionData data;
         private string hash;
 
         public string Hash => hash;
-        public virtual GenericKeyedCollection<string, VersionData> Files => files;
+        public virtual VersionData Data => data;
 
-        public Version(GenericKeyedCollection<string, VersionData> files, string hash)
+        public Version(VersionData data, string hash)
         {
-            this.files = files;
+            this.data = data;
             this.hash = hash;
         }
 
-        public Version(GenericKeyedCollection<string, VersionData> files)
+        public Version(VersionData data)
         {
-            this.files = files;
+            this.data = data;
             this.hash = GetHash();
         }
 
         private string GetHash()
         {
-            return Model.Hash.ComputeHash(files.GetHashCode().ToString());
+            return data.Hash;
         }
     }
 }

@@ -53,5 +53,11 @@ namespace EChestVC.Directory
         {
             changelog = directory.GetChangelog(Hash);
         }
+
+        public override string GetCachedHash(string filepath)
+        {
+            if (changelog == null) Load();
+            return changelog.GetCachedHash(filepath);
+        }
     }
 }
