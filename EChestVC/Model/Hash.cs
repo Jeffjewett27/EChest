@@ -11,7 +11,14 @@ namespace EChestVC.Model
         {
             var hasher = SHA256.Create();
             hasher.ComputeHash(Encoding.ASCII.GetBytes(input));
-            return Encoding.ASCII.GetString(hasher.Hash);
+
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < hasher.Hash.Length; i++)
+            {
+                sb.Append(hasher.Hash[i].ToString("x2"));
+            }
+            return sb.ToString();
+            //return Encoding.ASCII.GetString(hasher.Hash);
         }
     }
 }

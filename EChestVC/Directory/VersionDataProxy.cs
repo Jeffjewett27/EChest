@@ -42,11 +42,25 @@ namespace EChestVC.Directory
             }
         }
         
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="versionHash">The identifier of the version the data is contained in</param>
+        /// <param name="filepath">The relative path from the top level version folder</param>
+        /// <param name="directory"></param>
+        /// <returns></returns>
         public static VersionDataProxy Create(string versionHash, string filepath, DirectoryStructure directory)
         {
             return new VersionDataProxy(versionHash, filepath, (StreamReader)null, directory);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="versionHash">The identifier of the version the data is contained in</param>
+        /// <param name="filepath">The relative path from the top level version folder</param>
+        /// <param name="directory"></param>
+        /// <returns></returns>
         public static VersionDataProxy Create(string versionHash, string filepath, DirectoryStructure directory, string hash)
         {
             return new VersionDataProxy(versionHash, filepath, (StreamReader)null, directory, hash);

@@ -9,6 +9,15 @@ namespace EChestVC.Directory.Load
 {
     static class VersionDataFileManager
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dirpath">The absolute path to the directory in which all files are contained</param>
+        /// <param name="filepath">The relative path to a file or directory from dirpath</param>
+        /// <param name="loadData">Whether or not to read the files</param>
+        /// <param name="directory">The content directory from which to read</param>
+        /// <param name="changelog">An optional Changelog parameter to fill in hashes</param>
+        /// <returns></returns>
         public static VersionData LoadVersionData(string dirpath, string filepath, bool loadData, DirectoryStructure directory, Changelog changelog = null)
         {
             string path = Path.Combine(dirpath, filepath);
@@ -24,7 +33,7 @@ namespace EChestVC.Directory.Load
             }
             else
             {
-                return LoadFile(path, filepath, loadData, directory, changelog);
+                return LoadFile(path, dirpath, filepath, loadData, directory, changelog);
             }
         }
 
@@ -47,7 +56,7 @@ namespace EChestVC.Directory.Load
         private static VDKeyedCollection GetVersionDatas(string path, string dirPath, string filePath, bool loadData, DirectoryStructure directory, Changelog changelog)
         {
             VDKeyedCollection datas = new VDKeyedCollection();
-            IEnumerable<string> directoryNames = System.IO.Directory.EnumerateDirectories(path).Select(Path.GetDirectoryName);
+            IEnumerable<string> directoryNames = System.IO.Directory.EnumerateDirectories(path).Select(Path.GetFileName);
             IEnumerable<string> fileNames = System.IO.Directory.EnumerateFiles(path).Select(Path.GetFileName);
             foreach (string dir in directoryNames)
             {
@@ -62,7 +71,7 @@ namespace EChestVC.Directory.Load
             return datas;
         }
 
-        private static VersionData LoadFile(string path, string filepath, bool loadData, DirectoryStructure directory, Changelog changelog)
+        private static VersionData LoadFile(string path, string dirPath, string filepath, bool loadData, DirectoryStructure directory, Changelog changelog)
         {
             if (loadData)
             {
@@ -80,7 +89,7 @@ namespace EChestVC.Directory.Load
             }
             else
             {
-                string versionHash = Path.GetFileName(path);
+                string versionHash = Path.GetFileName(dirPath);
                 if (changelog == null)
                 {
                     return VersionDataProxy.Create(versionHash, filepath, directory);

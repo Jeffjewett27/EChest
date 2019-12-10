@@ -25,7 +25,19 @@ namespace EChestVC.Tests
         public void GetVersion()
         {
             Version v = directory.GetVersion("init", false);
+            string vh = v.Data.Hash;
+            Assert.AreEqual(v.Hash, "init");
+            v.Data.Children.TryGetValue("file1.txt", out VersionData f1txt);
+            Assert.AreEqual(f1txt.Data.ReadToEnd(), "file1 v1");
+        }
 
+        [TestMethod]
+        public void GetCommit()
+        {
+            Commit c = directory.GetCommit("init");
+            Assert.AreEqual(c.Hash, "init");
+            Assert.IsTrue(c.Changelog.Added.ContainsKey("file1.txt"));
+            Assert.AreEqual(c.Version.Data.Children.Count, 2);
         }
     }
 

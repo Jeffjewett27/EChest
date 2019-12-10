@@ -25,6 +25,12 @@ namespace EChestVC.Model
         public virtual string Hash => hash;
         public FileType Filetype => filetype;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="filename">The relative path from the version directory</param>
+        /// <param name="data"></param>
+        /// <param name="hash"></param>
         public VersionData(string filename, StreamReader data, string hash)
         {
             this.data = data;
@@ -33,6 +39,12 @@ namespace EChestVC.Model
             this.filetype = FileType.File;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="filename">The relative path from the version directory</param>
+        /// <param name="data"></param>
+        /// <param name="hash"></param>
         public VersionData(string filename, StreamReader data)
         {
             this.data = data;

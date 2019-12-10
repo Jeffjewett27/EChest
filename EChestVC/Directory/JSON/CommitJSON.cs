@@ -17,6 +17,11 @@ namespace EChestVC.Directory.JSON
         public string Version { get; set; }
         public CommitMetadataJSON Metadata { get; set; }
 
+        public CommitJSON()
+        {
+
+        }
+
         public CommitJSON(Commit commit)
         {
             Hash = commit.Hash;
@@ -49,7 +54,9 @@ namespace EChestVC.Directory.JSON
                 directory.GetVersion(Hash, loader.LoadVersionData) :
                 new VersionProxy(Version, directory);
 
-            return new Commit(parents, changelog, version, Metadata.GetMetadata(), Hash);
+            CommitMetadata metadata = Metadata != null ? Metadata.GetMetadata() : new CommitMetadata();
+
+            return new Commit(parents, changelog, version, metadata, Hash);
         }
 
         public Commit GetCommit(DirectoryStructure directory)
@@ -58,7 +65,9 @@ namespace EChestVC.Directory.JSON
             Changelog changelog = new ChangelogProxy(Changelog, directory);
             Version version = new VersionProxy(Version, directory);
 
-            return new Commit(parents, changelog, version, Metadata.GetMetadata(), Hash);
+            CommitMetadata metadata = Metadata != null ? Metadata.GetMetadata() : new CommitMetadata();
+
+            return new Commit(parents, changelog, version, metadata, Hash);
         }
     }
 }

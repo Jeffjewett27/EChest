@@ -13,6 +13,7 @@ namespace EChestVC.Directory
         public ChangelogProxy(string hash, DirectoryStructure directory) : base(hash)
         {
             changelog = null;
+            this.directory = directory;
         }
 
         public override Dictionary<string, string> Added { get

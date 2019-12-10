@@ -22,14 +22,9 @@ namespace EChestVC.Directory.Load
             {
                 throw new ArgumentException("Could not read file " + filepath);
             }
-            try
-            {
-                commit = JsonSerializer.Deserialize<CommitJSON>(json);
-            }
-            catch
-            {
-                throw new FormatException("Could not deserialize " + filepath);
-            }
+            commit = JsonSerializer.Deserialize<CommitJSON>(json);
+            if (commit == null)
+                throw new ArgumentNullException("commitjson is null");
             if (loader != null)
             {
                 return commit.GetCommit(directory, loader);
