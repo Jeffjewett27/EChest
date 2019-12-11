@@ -2,6 +2,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using EChestVC.Model;
 using EChestVC.Directory;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using Version = EChestVC.Model.Version;
 
 namespace EChestVC.Tests
@@ -9,7 +11,8 @@ namespace EChestVC.Tests
     [TestClass]
     public class ModelTests
     {
-        private DirectoryStructure directory = new DirectoryStructure(@"C:\Users\jeffr\Documents\EChest\Big Blocks\Resource Packs\Format v3");
+        private const string path = @"C:\Users\jeffr\Documents\EChest\Big Blocks\Resource Packs\Format v3";
+        private DirectoryStructure directory = new DirectoryStructure(path);
         [TestMethod]
         public void GetChangelog()
         {
@@ -19,6 +22,19 @@ namespace EChestVC.Tests
             c.Renamed.TryGetValue("file1.txt", out string f4txt);
             Assert.AreEqual(f4txt, "file4.txt");
             Assert.IsTrue(c.Removed.Contains("file3.txt"));
+        }
+
+        [TestMethod]
+        public void CreateAndDeleteChangelog()
+        {
+            string cpath = path + "\\Changelogs\\test.json";
+            Changelog c = new Changelog("test");
+            directory.CreateChangelog(c);
+            Assert.IsTrue(File.Exists(cpath));
+            string text = File.ReadAllText(cpath);
+            Assert.AreEqual(text, "{\r\n  \"Hash\": \"test\",\r\n  \"Added\": [],\r\n  \"Modified\": [],\r\n  \"Removed\": [],\r\n  \"Renamed\": []\r\n}");
+            directory.DeleteChangelog(c);
+            Assert.IsFalse(File.Exists(cpath));
         }
 
         [TestMethod]
@@ -38,6 +54,20 @@ namespace EChestVC.Tests
             Assert.AreEqual(c.Hash, "init");
             Assert.IsTrue(c.Changelog.Added.ContainsKey("file1.txt"));
             Assert.AreEqual(c.Version.Data.Children.Count, 2);
+        }
+
+        [TestMethod]
+        public void CreateAndDeleteCommit()
+        {
+            string cpath = path + "\\Commits\\test.json";
+            Commit c = new Commit(new Commit[] { directory.GetCommit("init") }, directory.GetChangelog("initChild"), directory.GetVersion("initChild"), 
+                new CommitMetadata(), "test");
+            directory.CreateCommit(c);
+            Assert.IsTrue(File.Exists(cpath));
+            string text = File.ReadAllText(cpath);
+            Assert.AreEqual(text, "{\r\n  \"Hash\": \"test\",\r\n  \"Parents\": [\r\n    \"init\"\r\n  ],\r\n  \"Changelog\": \"initChild\",\r\n  \"Version\": \"initChild\",\r\n  \"Metadata\": {}\r\n}");
+            directory.DeleteCommit(c);
+            Assert.IsFalse(File.Exists(cpath));
         }
     }
 

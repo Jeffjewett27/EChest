@@ -33,5 +33,31 @@ namespace EChestVC.Directory.Load
             }
             return changelog.GetChangelog(directory);
         }
+
+        public static void CreateChangelog(string directory, string filename, Changelog changelog)
+        {
+            if (changelog == null)
+            {
+                throw new ArgumentNullException("changelog");
+            }
+            if (!System.IO.Directory.Exists(directory))
+            {
+                throw new ArgumentException("Directory " + directory + " does not exist");
+            }
+            string path = Path.Combine(directory, filename);
+            if (File.Exists(path))
+            {
+                throw new ArgumentException("File " + path + " already exists");
+            }
+            ChangelogJSON cjson = new ChangelogJSON(changelog);
+            string json = JsonSerializer.Serialize<ChangelogJSON>(cjson, JSONFileFormat.GetJsonSerializerOptions());
+            File.WriteAllText(path, json);
+        }
+
+        public static void DeleteChangelog(string directory, string filename)
+        {
+            string path = Path.Combine(directory, filename);
+            File.Delete(path);
+        }
     }
 }

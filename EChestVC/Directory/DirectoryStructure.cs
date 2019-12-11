@@ -31,10 +31,54 @@ namespace EChestVC.Directory
             return ChangelogFileManager.LoadChangelog(filepath, this);
         }
 
+        public void CreateChangelog(Changelog changelog)
+        {
+            if (changelog == null)
+            {
+                throw new ArgumentNullException("changelog");
+            }
+            string filename = changelog.Hash + CHANGELOG_EXT;
+            string directory = Path.Combine(path, CHANGELOG_PATH);
+            ChangelogFileManager.CreateChangelog(directory, filename, changelog);
+        }
+
+        public void DeleteChangelog(Changelog changelog)
+        {
+            if (changelog == null)
+            {
+                throw new ArgumentNullException("changelog");
+            }
+            string filename = changelog.Hash + CHANGELOG_EXT;
+            string directory = Path.Combine(path, CHANGELOG_PATH);
+            ChangelogFileManager.DeleteChangelog(directory, filename);
+        }
+
         public Commit GetCommit(string hash, CommitDependencyLoader loader = null)
         {
             string filepath = Path.Combine(path, COMMIT_PATH, hash + COMMIT_EXT);
             return CommitFileManager.LoadCommit(filepath, this, loader);
+        }
+
+        public void CreateCommit(Commit commit)
+        {
+            if (commit == null)
+            {
+                throw new ArgumentNullException("commit");
+            }
+            string filename = commit.Hash + COMMIT_EXT;
+            string directory = Path.Combine(path, COMMIT_PATH);
+            CommitFileManager.CreateCommit(directory, filename, commit);
+        }
+
+        public void DeleteCommit(Commit commit)
+        {
+            if (commit == null)
+            {
+                throw new ArgumentNullException("commit");
+            }
+            string filename = commit.Hash + COMMIT_EXT;
+            string directory = Path.Combine(path, COMMIT_PATH);
+            CommitFileManager.DeleteCommit(directory, filename);
         }
 
         public VersionData GetVersionData(string versionHash, string filepath, bool loadData, DirectoryStructure directory, Changelog changelog = null)

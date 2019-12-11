@@ -42,6 +42,10 @@ namespace EChestVC.Directory.JSON
             Dictionary<string, string> modified;
             HashSet<string> removed;
             Dictionary<string, string> renamed;
+            if (Hash == null)
+            {
+                throw new FormatException("Hash should not be null");
+            }
             if (Added != null)
             {
                 var addedVals = from r in Added select new KeyValuePair<string, string>(r[0], r[1]);

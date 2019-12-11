@@ -34,5 +34,31 @@ namespace EChestVC.Directory.Load
                 return commit.GetCommit(directory);
             }
         }
+
+        public static void CreateCommit(string directory, string filename, Commit commit)
+        {
+            if (commit == null)
+            {
+                throw new ArgumentNullException("commit");
+            }
+            if (!System.IO.Directory.Exists(directory))
+            {
+                throw new ArgumentException("Directory " + directory + " does not exist");
+            }
+            string path = Path.Combine(directory, filename);
+            if (File.Exists(path))
+            {
+                throw new ArgumentException("File " + path + " already exists");
+            }
+            CommitJSON cjson = new CommitJSON(commit);
+            string json = JsonSerializer.Serialize<CommitJSON>(cjson, JSONFileFormat.GetJsonSerializerOptions());
+            File.WriteAllText(path, json);
+        }
+
+        public static void DeleteCommit(string directory, string filename)
+        {
+            string path = Path.Combine(directory, filename);
+            File.Delete(path);
+        }
     }
 }

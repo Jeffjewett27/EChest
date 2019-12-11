@@ -45,7 +45,7 @@ namespace EChestVC.Model
             this.hash = hash;
         }
 
-        protected Changelog(string hash)
+        public Changelog(string hash)
         {
             modified = new Dictionary<string, string>();
             added = new Dictionary<string, string>();
