@@ -73,18 +73,18 @@ namespace EChestVC.Directory.Load
 
         private static VersionData LoadFile(string path, string dirPath, string filepath, bool loadData, DirectoryStructure directory, Changelog changelog)
         {
+            string filename = Path.GetFileName(path);
             if (loadData)
             {
                 FileStream fs = new FileStream(path, FileMode.Open);
-                StreamReader sr = new StreamReader(fs);
                 if (changelog == null)
                 {
-                    return new VersionData(filepath, sr);
+                    return new VersionData(filename, fs);
                 }
                 else
                 {
                     string hash = changelog.GetCachedHash(filepath);
-                    return new VersionData(filepath, sr, hash);
+                    return new VersionData(filename, fs, hash);
                 }
             }
             else
@@ -92,12 +92,12 @@ namespace EChestVC.Directory.Load
                 string versionHash = Path.GetFileName(dirPath);
                 if (changelog == null)
                 {
-                    return VersionDataProxy.Create(versionHash, filepath, directory);
+                    return VersionDataProxy.Create(versionHash, filename, directory);
                 }
                 else
                 {
                     string hash = changelog.GetCachedHash(filepath);
-                    return VersionDataProxy.Create(versionHash, filepath, directory, hash);
+                    return VersionDataProxy.Create(versionHash, filename, directory, hash);
                 }
             }
         }
@@ -106,6 +106,32 @@ namespace EChestVC.Directory.Load
         {
             VDKeyedCollection datas = GetVersionDatas(dirPath, dirPath, "", loadData, directory, changelog);
             return new VersionData(versionHash, datas);
+        }
+
+        public static void CreateVersionData(string directory, VersionData data)
+        {
+            if (data == null)
+            {
+                throw new ArgumentNullException("data");
+            }
+            if (!System.IO.Directory.Exists(directory))
+            {
+                throw new IOException("Directory " + directory + " does not exist");
+            }
+            string path = Path.Combine(directory, data.Filename);
+            if (data.Filetype == VersionData.FileType.Directory)
+            {
+                System.IO.Directory.CreateDirectory(path);
+                foreach (VersionData vd in data.Children)
+                {
+                    CreateVersionData(path, vd);
+                }
+            }
+            else
+            {
+                using var fs = File.Create(path);
+                data.Data.CopyTo(fs);
+            }
         }
     }
 

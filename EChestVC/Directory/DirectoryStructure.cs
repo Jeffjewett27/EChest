@@ -18,6 +18,7 @@ namespace EChestVC.Directory
         private const string COMMIT_PATH = "Commits";
         private const string CHANGELOG_EXT = ".json";
         private const string COMMIT_EXT = ".json";
+        private const string WORKING_PATH = "WorkingDirectory";
         private readonly string path;
 
         public DirectoryStructure(string path)
@@ -109,6 +110,18 @@ namespace EChestVC.Directory
         {
             string filepath = Path.Combine(path, VERSION_PATH, hash);
             return VersionFileManager.LoadVersion(hash, filepath, this, false, changelog);
+        }
+
+        public void CreateVersion(Version version)
+        {
+            string directory = Path.Combine(path, VERSION_PATH);
+            VersionFileManager.CreateVersion(directory, version.Hash, version);
+        }
+
+        public Version GetWorkingVersion()
+        {
+            string dirpath = Path.Combine(path, WORKING_PATH);
+            return VersionFileManager.LoadVersion(dirpath, this, true);
         }
     }
 }

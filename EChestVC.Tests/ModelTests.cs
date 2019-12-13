@@ -44,7 +44,16 @@ namespace EChestVC.Tests
             string vh = v.Data.Hash;
             Assert.AreEqual(v.Hash, "init");
             v.Data.Children.TryGetValue("file1.txt", out VersionData f1txt);
-            Assert.AreEqual(f1txt.Data.ReadToEnd(), "file1 v1");
+            StreamReader sr = new StreamReader(f1txt.Data);
+            Assert.AreEqual(sr.ReadToEnd(), "file1 v1");
+            sr.Dispose();
+        }
+
+        [TestMethod]
+        public void CreateVersion()
+        {
+            Version v = directory.GetWorkingVersion();
+            directory.CreateVersion(v);
         }
 
         [TestMethod]

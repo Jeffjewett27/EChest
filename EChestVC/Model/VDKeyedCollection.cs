@@ -20,11 +20,12 @@ namespace EChestVC.Model
 
         public string GetHash()
         {
-            string hash = "";
-            SortedList<string, VersionData> sorted = new SortedList<string, VersionData>(Dictionary);
+            string hash = "hash";
+            SortedList<string, VersionData> sorted = Dictionary != null ? new SortedList<string, VersionData>(Dictionary) :
+                new SortedList<string, VersionData>();
             foreach (var item in sorted)
             {
-                hash += item.Value.Hash;
+                hash += item.Value.Hash + item.Key;
             }
             return Hash.ComputeHash(hash);
         }

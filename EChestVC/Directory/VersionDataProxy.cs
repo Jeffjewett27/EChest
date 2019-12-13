@@ -16,7 +16,7 @@ namespace EChestVC.Directory
         private bool hasHash;
         private string versionHash;
 
-        public override StreamReader Data
+        public override Stream Data
         {
             get
             {
@@ -51,7 +51,7 @@ namespace EChestVC.Directory
         /// <returns></returns>
         public static VersionDataProxy Create(string versionHash, string filepath, DirectoryStructure directory)
         {
-            return new VersionDataProxy(versionHash, filepath, (StreamReader)null, directory);
+            return new VersionDataProxy(versionHash, filepath, (Stream)null, directory);
         }
 
         /// <summary>
@@ -63,16 +63,16 @@ namespace EChestVC.Directory
         /// <returns></returns>
         public static VersionDataProxy Create(string versionHash, string filepath, DirectoryStructure directory, string hash)
         {
-            return new VersionDataProxy(versionHash, filepath, (StreamReader)null, directory, hash);
+            return new VersionDataProxy(versionHash, filepath, (Stream)null, directory, hash);
         }
 
-        private VersionDataProxy(string versionHash, string filepath, StreamReader data, DirectoryStructure directory) : base(filepath, data, "")
+        private VersionDataProxy(string versionHash, string filepath, Stream data, DirectoryStructure directory) : base(filepath, data, "")
         {
             this.directory = directory;
             this.versionHash = versionHash;
         }
 
-        private VersionDataProxy(string versionHash, string filepath, StreamReader data, DirectoryStructure directory, string hash) : base(filepath, data, hash)
+        private VersionDataProxy(string versionHash, string filepath, Stream data, DirectoryStructure directory, string hash) : base(filepath, data, hash)
         {
             this.directory = directory;
             hasHash = true;

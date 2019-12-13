@@ -14,12 +14,12 @@ namespace EChestVC.Model
         }
 
         private readonly FileType filetype;
-        private readonly StreamReader data;
+        private readonly Stream data;
         private readonly VDKeyedCollection children;
         private readonly string filename;
         private readonly string hash;
 
-        public virtual StreamReader Data => data;
+        public virtual Stream Data => data;
         public virtual VDKeyedCollection Children => children;
         public string Filename => filename;
         public virtual string Hash => hash;
@@ -31,7 +31,7 @@ namespace EChestVC.Model
         /// <param name="filename">The relative path from the version directory</param>
         /// <param name="data"></param>
         /// <param name="hash"></param>
-        public VersionData(string filename, StreamReader data, string hash)
+        public VersionData(string filename, Stream data, string hash)
         {
             this.data = data;
             this.hash = hash;
@@ -45,7 +45,7 @@ namespace EChestVC.Model
         /// <param name="filename">The relative path from the version directory</param>
         /// <param name="data"></param>
         /// <param name="hash"></param>
-        public VersionData(string filename, StreamReader data)
+        public VersionData(string filename, Stream data)
         {
             this.data = data;
             this.filename = filename;
