@@ -57,6 +57,15 @@ namespace EChestVC.Tests
         }
 
         [TestMethod]
+        public void MakeChangelog()
+        {
+            Version v1 = directory.GetVersion("updateTest");
+            Version v2 = directory.GetVersion("originalTest");
+            Changelog changelog = v2.GetChangelog(v1);
+            int count = changelog.Added.Count;
+        }
+
+        [TestMethod]
         public void GetCommit()
         {
             Commit c = directory.GetCommit("init");

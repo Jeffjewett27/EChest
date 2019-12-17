@@ -28,5 +28,10 @@ namespace EChestVC.Model
         {
             return data.Hash;
         }
+
+        public Changelog GetChangelog(Version child)
+        {
+            return VersionData.BuildChangelog(Data, child.Data).GetChangelog();
+        }
     }
 }

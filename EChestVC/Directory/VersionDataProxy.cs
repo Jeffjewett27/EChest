@@ -15,6 +15,7 @@ namespace EChestVC.Directory
         private readonly DirectoryStructure directory;
         private bool hasHash;
         private string versionHash;
+        private string filepath;
 
         public override Stream Data
         {
@@ -49,9 +50,9 @@ namespace EChestVC.Directory
         /// <param name="filepath">The relative path from the top level version folder</param>
         /// <param name="directory"></param>
         /// <returns></returns>
-        public static VersionDataProxy Create(string versionHash, string filepath, DirectoryStructure directory)
+        public static VersionDataProxy Create(string versionHash, string filepath, string filename, DirectoryStructure directory)
         {
-            return new VersionDataProxy(versionHash, filepath, (Stream)null, directory);
+            return new VersionDataProxy(versionHash, filepath, filename, (Stream)null, directory);
         }
 
         /// <summary>
@@ -61,27 +62,31 @@ namespace EChestVC.Directory
         /// <param name="filepath">The relative path from the top level version folder</param>
         /// <param name="directory"></param>
         /// <returns></returns>
-        public static VersionDataProxy Create(string versionHash, string filepath, DirectoryStructure directory, string hash)
+        public static VersionDataProxy Create(string versionHash, string filepath, string filename, DirectoryStructure directory, string hash)
         {
-            return new VersionDataProxy(versionHash, filepath, (Stream)null, directory, hash);
+            return new VersionDataProxy(versionHash, filepath, filename, (Stream)null, directory, hash);
         }
 
-        private VersionDataProxy(string versionHash, string filepath, Stream data, DirectoryStructure directory) : base(filepath, data, "")
+        private VersionDataProxy(string versionHash, string filepath, string filename, Stream data, 
+            DirectoryStructure directory) : base(filename, data, "")
         {
             this.directory = directory;
             this.versionHash = versionHash;
+            this.filepath = filepath;
         }
 
-        private VersionDataProxy(string versionHash, string filepath, Stream data, DirectoryStructure directory, string hash) : base(filepath, data, hash)
+        private VersionDataProxy(string versionHash, string filepath, string filename, Stream data, 
+            DirectoryStructure directory, string hash) : base(filename, data, hash)
         {
             this.directory = directory;
             hasHash = true;
             this.versionHash = versionHash;
+            this.filepath = filepath;
         }
 
         private void Load()
         {
-            data = directory.GetVersionData(versionHash, Filename, true, directory);
+            data = directory.GetVersionData(versionHash, filepath, true, directory);
         }
     }
 }

@@ -92,12 +92,12 @@ namespace EChestVC.Directory.Load
                 string versionHash = Path.GetFileName(dirPath);
                 if (changelog == null)
                 {
-                    return VersionDataProxy.Create(versionHash, filename, directory);
+                    return VersionDataProxy.Create(versionHash, filepath, filename, directory);
                 }
                 else
                 {
                     string hash = changelog.GetCachedHash(filepath);
-                    return VersionDataProxy.Create(versionHash, filename, directory, hash);
+                    return VersionDataProxy.Create(versionHash, filepath, filename, directory, hash);
                 }
             }
         }

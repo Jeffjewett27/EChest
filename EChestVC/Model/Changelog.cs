@@ -18,14 +18,12 @@ namespace EChestVC.Model
         private HashSet<string> removed;
         private Dictionary<string, string> renamed;
         private string hash;
-        private bool isEmpty;
 
         public virtual Dictionary<string, string> Modified { get => modified; }
         public virtual Dictionary<string, string> Added { get => added; }
         public virtual HashSet<string> Removed { get => removed; }
         public virtual Dictionary<string, string> Renamed { get => renamed; }
         public string Hash { get => hash; }
-        public bool IsEmpty { get => isEmpty; }
 
         public Changelog(Dictionary<string, string> m, Dictionary<string, string> a, HashSet<string> rem, Dictionary<string, string> ren)
         {
@@ -54,9 +52,13 @@ namespace EChestVC.Model
             this.hash = hash;
         }
 
-        protected Changelog()
+        public Changelog()
         {
-            isEmpty = true;
+            modified = new Dictionary<string, string>();
+            added = new Dictionary<string, string>();
+            removed = new HashSet<string>();
+            renamed = new Dictionary<string, string>();
+            this.hash = GetHash();
         }
 
         public static Changelog EmptyChangelog()
@@ -112,7 +114,27 @@ namespace EChestVC.Model
 
         private string GetHash()
         {
-            throw new NotImplementedException();
+            StringBuilder sb = new StringBuilder("changelog");
+            foreach (var a in added)
+            {
+                sb.Append(a.Key);
+                sb.Append(a.Value);
+            }
+            foreach (var m in modified)
+            {
+                sb.Append(m.Key);
+                sb.Append(m.Value);
+            }
+            foreach (var r in removed)
+            {
+                sb.Append(r);
+            }
+            foreach (var r in renamed)
+            {
+                sb.Append(r.Key);
+                sb.Append(r.Value);
+            }
+            return Model.Hash.ComputeHash(sb.ToString());
         }
 
         public virtual string GetCachedHash(string filepath)
@@ -127,6 +149,12 @@ namespace EChestVC.Model
             {
                 throw new ArgumentException("Path " + filepath + " is not cached");
             }
+        }
+
+        public virtual bool IsEmpty()
+        {
+            int total = added.Count + modified.Count + removed.Count + renamed.Count;
+            return total == 0;
         }
     }
 }

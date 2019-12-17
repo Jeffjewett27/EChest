@@ -25,7 +25,7 @@ namespace EChestVC.Model
 
         public Commit(Commit[] parents, Changelog changelog, Version version, CommitMetadata metadata)
         {
-            if (changelog.IsEmpty)
+            if (changelog.IsEmpty())
             {
                 throw new FormatException("Commit cannot receive an empty changelog");
             }
@@ -38,7 +38,7 @@ namespace EChestVC.Model
 
         public Commit(Commit[] parents, Changelog changelog, Version version, CommitMetadata metadata, string hash)
         {
-            if (changelog.IsEmpty)
+            if (changelog.IsEmpty())
             {
                 throw new FormatException("Commit cannot receive an empty changelog");
             }
