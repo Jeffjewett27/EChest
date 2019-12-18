@@ -221,14 +221,11 @@ namespace EChestVC.Model
                     if (thisVD.Filetype == otherVD.Filetype)
                     {
                         string fpath = PrefixFilename(prefix, thisVD.Filename);
+                        changelog.Modify(fpath, thisVD.Hash);
                         if (thisVD.Filetype == FileType.Directory)
                         {
                             var subchangelog = BuildChangelog(thisVD, otherVD, fpath);
                             changelog.Aggregate(subchangelog);
-                        }
-                        else
-                        {
-                            changelog.Modify(fpath, thisVD.Hash);
                         }
                         toRemove.AddLast(thisVD.Filename);
                     }
@@ -297,6 +294,31 @@ namespace EChestVC.Model
                     changelog.Aggregate(subchangelog);
                 }
             }
+        }
+
+        public VersionData Trim(Changelog changelog, string prefix = "")
+        {
+            if (Filetype != FileType.Directory)
+            {
+                throw new InvalidOperationException("Trim cannot operate on a FileType.File");
+            }
+            var vdcollection = new VDKeyedCollection();
+            foreach (var vd in children)
+            {
+                string fpath = PrefixFilename(prefix, vd.Filename);
+                if (changelog.Added.ContainsKey(fpath) || changelog.Modified.ContainsKey(fpath))
+                {
+                    if (vd.Filetype == FileType.Directory)
+                    {
+                        vdcollection.Add(vd.Trim(changelog, fpath));
+                    }
+                    else
+                    {
+                        vdcollection.Add(new VersionData(vd.Filename, vd.Data));
+                    }
+                }
+            }
+            return new VersionData(Filename, vdcollection);
         }
     }
 }

@@ -33,5 +33,11 @@ namespace EChestVC.Model
         {
             return VersionData.BuildChangelog(Data, child.Data).GetChangelog();
         }
+
+        public Version GetChangelogVersion(Changelog changelog)
+        {
+            var vd = data.Trim(changelog);
+            return new Version(vd, vd.Hash);
+        }
     }
 }

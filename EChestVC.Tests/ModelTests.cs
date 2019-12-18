@@ -87,6 +87,16 @@ namespace EChestVC.Tests
             directory.DeleteCommit(c);
             Assert.IsFalse(File.Exists(cpath));
         }
+
+        [TestMethod]
+        public void DiffWorkingVersion()
+        {
+            Version v1 = directory.GetVersion("updateTest");
+            Version v2 = directory.GetVersion("originalTest");
+            Changelog changelog = v2.GetChangelog(v1);
+            Version v = v2.GetChangelogVersion(changelog);
+            directory.CreateVersion(v);
+        }
     }
 
     
