@@ -19,7 +19,12 @@ namespace EChestVC.Model
         private readonly string filename;
         private readonly string hash;
 
-        public virtual Stream Data => data;
+        public virtual Stream Data {
+            get {
+                data.Seek(0, SeekOrigin.Begin);
+                return data;
+            }
+        }
         public virtual VDKeyedCollection Children => children;
         public string Filename => filename;
         public virtual string Hash => hash;

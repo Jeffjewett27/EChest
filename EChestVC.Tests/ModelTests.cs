@@ -43,9 +43,10 @@ namespace EChestVC.Tests
             Version v = directory.GetVersion("init", false);
             string vh = v.Data.Hash;
             Assert.AreEqual(v.Hash, "init");
-            v.Data.Children.TryGetValue("file1.txt", out VersionData f1txt);
+            VersionData f1txt = v.Data.Children["file1.txt"];
             StreamReader sr = new StreamReader(f1txt.Data);
-            Assert.AreEqual(sr.ReadToEnd(), "file1 v1");
+            string result = sr.ReadToEnd();
+            Assert.AreEqual(result, "file1 v1");
             sr.Dispose();
         }
 
@@ -94,7 +95,7 @@ namespace EChestVC.Tests
             Version v1 = directory.GetVersion("updateTest");
             Version v2 = directory.GetVersion("originalTest");
             Changelog changelog = v2.GetChangelog(v1);
-            Version v = v2.GetChangelogVersion(changelog);
+            Version v = v1.GetChangelogVersion(changelog);
             directory.CreateVersion(v);
         }
     }

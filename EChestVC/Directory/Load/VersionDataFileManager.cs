@@ -77,6 +77,8 @@ namespace EChestVC.Directory.Load
             if (loadData)
             {
                 FileStream fs = new FileStream(path, FileMode.Open);
+                //using StreamReader test = new StreamReader(fs);
+                //string t = test.ReadToEnd();
                 if (changelog == null)
                 {
                     return new VersionData(filename, fs);
