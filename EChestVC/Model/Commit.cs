@@ -25,10 +25,6 @@ namespace EChestVC.Model
 
         public Commit(Commit[] parents, Changelog changelog, Version version, CommitMetadata metadata)
         {
-            if (changelog.IsEmpty())
-            {
-                throw new FormatException("Commit cannot receive an empty changelog");
-            }
             this.parents = parents;
             this.changelog = changelog;
             this.metadata = metadata;
@@ -38,10 +34,6 @@ namespace EChestVC.Model
 
         public Commit(Commit[] parents, Changelog changelog, Version version, CommitMetadata metadata, string hash)
         {
-            if (changelog.IsEmpty())
-            {
-                throw new FormatException("Commit cannot receive an empty changelog");
-            }
             this.parents = parents;
             this.changelog = changelog;
             this.metadata = metadata;
@@ -73,17 +65,37 @@ namespace EChestVC.Model
         /// </summary>
         /// <param name="ancestor">this and ancestor must form a boolean algrebra with ancestor at the top</param>
         /// <returns></returns>
-        private AggregatedChangelog AncestorChangelog(Commit ancestor)
+        public AggregatedChangelog AncestorChangelog(Commit ancestor)
         {
-            if (ancestor.Changelog == Changelog) {
+            if (ancestor.Hash == Hash) {
                 return AggregatedChangelog.EmptyChangelog();
             }
             Commit next = Parents[0];
-            for (int i = 0; i < Parents.Length; i++)
+            for (int i = 1; i < Parents.Length; i++)
             {
                 next = LCAFind(next, Parents[i]);
             }
             AggregatedChangelog aggregate = next.AncestorChangelog(ancestor);
+            aggregate.AggregateNext(commitHash, Changelog);
+            return aggregate;
+        }
+
+        /// <summary>
+        /// Aggregates the changelog from initial commit to this commit
+        /// </summary>
+        /// <returns></returns>
+        public AggregatedChangelog AggregateChangelog()
+        {
+            if (Parents[0].IsNull)
+            {
+                return new AggregatedChangelog(Hash, Changelog);
+            }
+            Commit next = Parents[0];
+            for (int i = 1; i < Parents.Length; i++)
+            {
+                next = LCAFind(next, Parents[i]);
+            }
+            AggregatedChangelog aggregate = next.AggregateChangelog();
             aggregate.AggregateNext(commitHash, Changelog);
             return aggregate;
         }

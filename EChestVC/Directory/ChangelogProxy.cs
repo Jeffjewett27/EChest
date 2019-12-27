@@ -60,5 +60,11 @@ namespace EChestVC.Directory
             if (changelog == null) Load();
             return changelog.GetCachedHash(filepath);
         }
+
+        public override bool IsEmpty()
+        {
+            if (changelog == null) Load();
+            return changelog.IsEmpty();
+        }
     }
 }

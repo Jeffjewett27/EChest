@@ -98,6 +98,18 @@ namespace EChestVC.Tests
             Version v = v1.GetChangelogVersion(changelog);
             directory.CreateVersion(v);
         }
+
+        [TestMethod]
+        public void AggregateChanges()
+        {
+            Commit c1 = directory.GetCommit("init");
+            Commit c2 = directory.GetCommit("mainBranch2");
+            AggregatedChangelog aggregated = c2.AncestorChangelog(c1);
+            string test = "";
+            Version v = directory.AggregateVersion(aggregated);
+            test = "";
+            directory.CreateVersion(v);
+        }
     }
 
     

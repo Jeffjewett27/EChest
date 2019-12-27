@@ -11,10 +11,38 @@ namespace EChestVC.Directory
         private Commit commit;
         private DirectoryStructure directory;
 
-        public override Changelog Changelog => commit.Changelog;
-        public override CommitMetadata Metadata => commit.Metadata;
-        public override Commit[] Parents => commit.Parents;
-        public override Version Version => commit.Version;
+        public override Changelog Changelog
+        {
+            get
+            {
+                if (commit == null) Load();
+                return commit.Changelog;
+            }
+        }
+        public override CommitMetadata Metadata
+        {
+            get
+            {
+                if (commit == null) Load();
+                return commit.Metadata;
+            }
+        }
+        public override Commit[] Parents
+        {
+            get
+            {
+                if (commit == null) Load();
+                return commit.Parents;
+            }
+        }
+        public override Version Version
+        {
+            get
+            {
+                if (commit == null) Load();
+                return commit.Version;
+            }
+        }
 
         public CommitProxy(string hash, DirectoryStructure directory) : base(null, null, null, null, hash)
         {
@@ -23,7 +51,7 @@ namespace EChestVC.Directory
 
         private void Load()
         {
-            directory.GetCommit(Hash);
+            commit = directory.GetCommit(Hash);
         }
 
         public override Changelog DivergentChangelog(Commit other)

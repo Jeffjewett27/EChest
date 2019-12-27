@@ -9,15 +9,20 @@ namespace EChestVC.Model
     /// </summary>
     public class AggregatedChangelog
     {
-        private Dictionary<string, string> modified; //file->hash
-        private Dictionary<string, string> added; //file->hash
+        private Dictionary<string, Tuple<string, string>> modified; //file-><datahash, versionhash>
+        private Dictionary<string, Tuple<string, string>> added; //file->hash
         private HashSet<string> removed; //file
         private Dictionary<string, string> renamed; //new file-> old file
 
+        public Dictionary<string, Tuple<string, string>> Modified => modified;
+        public Dictionary<string, Tuple<string, string>> Added => added;
+        public HashSet<string> Removed => removed;
+        public Dictionary<string, string> Renamed => renamed; 
+
         public AggregatedChangelog(string hash, Changelog changelog)
         {
-            modified = new Dictionary<string, string>();
-            added = new Dictionary<string, string>();
+            modified = new Dictionary<string, Tuple<string, string>>();
+            added = new Dictionary<string, Tuple<string, string>>();
             removed = new HashSet<string>();
             renamed = new Dictionary<string, string>();
 
@@ -26,8 +31,8 @@ namespace EChestVC.Model
 
         private AggregatedChangelog()
         {
-            modified = new Dictionary<string, string>();
-            added = new Dictionary<string, string>();
+            modified = new Dictionary<string, Tuple<string, string>>();
+            added = new Dictionary<string, Tuple<string, string>>();
             removed = new HashSet<string>();
             renamed = new Dictionary<string, string>();
         }
@@ -64,11 +69,11 @@ namespace EChestVC.Model
             {
                 if (added.ContainsKey(add.Key))
                 {
-                    added[add.Key] = hash;
+                    added[add.Key] = Tuple.Create(add.Value, hash);
                 }
                 else if (removed.Contains(add.Key))
                 {
-                    modified.Add(add.Key, hash);
+                    modified.Add(add.Key, Tuple.Create(add.Value, hash));
                     removed.Remove(add.Key);
                 }
                 else if (modified.ContainsKey(add.Key))
@@ -77,7 +82,7 @@ namespace EChestVC.Model
                 }
                 else
                 {
-                    added.Add(add.Key, hash);
+                    added.Add(add.Key, Tuple.Create(add.Value, hash));
                 }
             }
         }
@@ -93,7 +98,7 @@ namespace EChestVC.Model
             {
                 if (added.ContainsKey(mod.Key))
                 {
-                    added[mod.Key] = hash;
+                    added[mod.Key] = Tuple.Create(mod.Value, hash);
                 }
                 else if (removed.Contains(mod.Key))
                 {
@@ -101,11 +106,11 @@ namespace EChestVC.Model
                 }
                 else if (modified.ContainsKey(mod.Key))
                 {
-                    added[mod.Key] = hash;
+                    modified[mod.Key] = Tuple.Create(mod.Value, hash);
                 }
                 else
                 {
-                    modified.Add(mod.Key, hash);
+                    modified.Add(mod.Key, Tuple.Create(mod.Value, hash));
                 }
             }
         }
@@ -182,7 +187,7 @@ namespace EChestVC.Model
                     if (added.ContainsKey(ren.Value))
                     {
                         //rename added file and remove rename
-                        added.TryGetValue(ren.Value, out string old);
+                        added.TryGetValue(ren.Value, out Tuple<string, string> old);
                         added.Remove(ren.Value);
                         added.Add(ren.Key, old);
                         renamed.Remove(ren.Key);
@@ -190,7 +195,7 @@ namespace EChestVC.Model
                     else if (modified.ContainsKey(ren.Value))
                     {
                         //rename modified file
-                        modified.TryGetValue(ren.Value, out string old);
+                        modified.TryGetValue(ren.Value, out Tuple<string, string> old);
                         modified.Remove(ren.Value);
                         modified.Add(ren.Key, old);
                     }
@@ -200,6 +205,31 @@ namespace EChestVC.Model
                     }
                 }
             }
+        }
+
+        public Changelog GetChangelog()
+        {
+            var added = new Dictionary<string, string>();
+            foreach (var a in this.added)
+            {
+                added.Add(a.Key, a.Value.Item1);
+            }
+            var modified = new Dictionary<string, string>();
+            foreach (var m in this.modified)
+            {
+                modified.Add(m.Key, m.Value.Item1);
+            }
+            var removed = new HashSet<string>();
+            foreach (var r in this.removed)
+            {
+                removed.Add(r);
+            }
+            var renamed = new Dictionary<string, string>();
+            foreach (var r in this.renamed)
+            {
+                renamed.Add(r.Key, r.Value);
+            }
+            return new Changelog(modified, added, removed, renamed);
         }
     }
 }

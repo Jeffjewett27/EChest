@@ -87,9 +87,8 @@ namespace EChestVC.Model
         public VersionData PathGetFile(string path)
         {
             //path example: thisfilename/childfilename/morestuff
-            char separator = Path.DirectorySeparatorChar;
-            int idx = path.IndexOf(separator);
-            if (idx < 0)
+            string rootDir = VersionDataPath.GetRootDirectory(path);
+            if (rootDir == path)
             {
                 if (filename == path)
                 {
@@ -103,8 +102,8 @@ namespace EChestVC.Model
             {
                 throw new ArgumentException(filename + " is not a directory for " + path);
             }
-            string childPath = path.Substring(idx + 1); //childPath example: childfilename/morestuff
-            string childName = childPath.Split(separator)[0]; //childName example: childfilename
+            string childPath = VersionDataPath.RemoveRootDirectory(path); //childPath example: childfilename/morestuff
+            string childName = VersionDataPath.GetRootDirectory(childPath); //childName example: childfilename
             if (children.TryGetValue(childName, out VersionData child))
             {
                 return child.PathGetFile(childPath);
@@ -270,7 +269,7 @@ namespace EChestVC.Model
 
         private static string PrefixFilename(string prefix, string filename)
         {
-            return Path.Join(prefix, filename);
+            return VersionDataPath.PrefixFilename(prefix, filename);
         }
 
         private static void AggregateRemove(ChangelogBuilder changelog, string prefix, VersionData original)

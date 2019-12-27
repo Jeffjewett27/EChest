@@ -123,5 +123,33 @@ namespace EChestVC.Directory
             string dirpath = Path.Combine(path, WORKING_PATH);
             return VersionFileManager.LoadVersion(dirpath, this, true);
         }
+
+        public Version AggregateVersion(AggregatedChangelog aggregated)
+        {
+            var versions = new Dictionary<string, Version>();
+            VersionBuilder builder = new VersionBuilder();
+            Action<Dictionary<string, Tuple<string, string>>> build = vals =>
+            {
+                foreach (var val in vals)
+                {
+                    string versionHash = val.Value.Item2;
+                    Version v;
+                    if (versions.ContainsKey(versionHash))
+                    {
+                        v = versions[versionHash];
+                    }
+                    else
+                    {
+                        v = GetVersion(versionHash);
+                        versions.Add(v.Hash, v);
+                    }
+                    var vdata = v.GetVersionData(val.Key);
+                    builder.AddVersionData(val.Key, vdata);
+                }
+            };
+            build(aggregated.Added);
+            build(aggregated.Modified);
+            return builder.GetVersion();
+        }
     }
 }

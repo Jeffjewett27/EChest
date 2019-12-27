@@ -39,5 +39,11 @@ namespace EChestVC.Model
             var vd = data.Trim(changelog);
             return new Version(vd, vd.Hash);
         }
+
+        public VersionData GetVersionData(string filepath)
+        {
+            string path = VersionDataPath.PrefixFilename(Data.Filename, filepath);
+            return Data.PathGetFile(path);
+        }
     }
 }
