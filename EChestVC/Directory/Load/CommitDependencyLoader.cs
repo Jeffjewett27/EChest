@@ -6,6 +6,7 @@ namespace EChestVC.Directory.Load
 {
     /// <summary>
     /// An object containing information on which dependencies a commit should be loaded with
+    /// Is a WIP
     /// </summary>
     public class CommitDependencyLoader
     {

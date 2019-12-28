@@ -7,18 +7,22 @@ using EChestVC.Model;
 
 namespace EChestVC.Directory.Load
 {
+    /// <summary>
+    /// Methods to interface the VersionData with the file directory
+    /// </summary>
     static class VersionDataFileManager
     {
         /// <summary>
-        /// 
+        /// Loads a file into a VersionData
         /// </summary>
-        /// <param name="dirpath">The absolute path to the directory in which all files are contained</param>
+        /// <param name="dirpath">The absolute path to the version directory in which all files are contained</param>
         /// <param name="filepath">The relative path to a file or directory from dirpath</param>
         /// <param name="loadData">Whether or not to read the files</param>
         /// <param name="directory">The content directory from which to read</param>
         /// <param name="changelog">An optional Changelog parameter to fill in hashes</param>
         /// <returns></returns>
-        public static VersionData LoadVersionData(string dirpath, string filepath, bool loadData, DirectoryStructure directory, Changelog changelog = null)
+        public static VersionData LoadVersionData(string dirpath, string filepath, bool loadData, 
+            DirectoryStructure directory, Changelog changelog = null)
         {
             string path = Path.Combine(dirpath, filepath);
             string filename = Path.GetFileName(path);
@@ -33,15 +37,24 @@ namespace EChestVC.Directory.Load
             }
             else
             {
-                return LoadFile(path, dirpath, filepath, loadData, directory, changelog);
+                return LoadFile(dirpath, filepath, loadData, directory, changelog);
             }
         }
 
-        private static VersionData LoadDirectory(string dirPath, string filePath, string filename, bool loadData, DirectoryStructure directory, 
-            Changelog changelog = null)
+        /// <summary>
+        /// Loads a folder from the file directory into a VersionData
+        /// </summary>
+        /// <param name="dirPath">The absolute path to the version directory in which all files are contained</param>
+        /// <param name="filePath">The relative path to a file or directory from dirpath</param>
+        /// <param name="filename">The name of the folder to load</param>
+        /// <param name="loadData">Whether or not to read the files</param>
+        /// <param name="directory">The content directory from which to read</param>
+        /// <param name="changelog">An optional Changelog parameter to fill in hashes</param>
+        /// <returns></returns>
+        private static VersionData LoadDirectory(string dirPath, string filePath, string filename, bool loadData, 
+            DirectoryStructure directory, Changelog changelog = null)
         {
-            string path = Path.Combine(dirPath, filePath);
-            VDKeyedCollection datas = GetVersionDatas(path, dirPath, filePath, loadData, directory, changelog);
+            VDKeyedCollection datas = GetVersionDatas(dirPath, filePath, loadData, directory, changelog);
             if (changelog == null)
             {
                 return new VersionData(filename, datas);
@@ -53,16 +66,28 @@ namespace EChestVC.Directory.Load
             }
         }
 
-        private static VDKeyedCollection GetVersionDatas(string path, string dirPath, string filePath, bool loadData, DirectoryStructure directory, Changelog changelog)
+        /// <summary>
+        /// Loads the content of a folder in the file directory to a VDKeyedCollection
+        /// </summary>
+        /// <param name="dirPath">The absolute path to the version directory in which all files are contained</param>
+        /// <param name="filePath">The relative path to a file or directory from dirpath</param>
+        /// <param name="loadData">Whether or not to read the files</param>
+        /// <param name="directory">The content directory from which to read</param>
+        /// <param name="changelog">An optional Changelog parameter to fill in hashes</param>
+        private static VDKeyedCollection GetVersionDatas(string dirPath, string filePath, bool loadData, 
+            DirectoryStructure directory, Changelog changelog)
         {
+            string path = Path.Combine(dirPath, filePath);
             VDKeyedCollection datas = new VDKeyedCollection();
+            //Add all the directories
             IEnumerable<string> directoryNames = System.IO.Directory.EnumerateDirectories(path).Select(Path.GetFileName);
-            IEnumerable<string> fileNames = System.IO.Directory.EnumerateFiles(path).Select(Path.GetFileName);
             foreach (string dir in directoryNames)
             {
                 string dp = Path.Combine(filePath, dir);
                 datas.Add(LoadVersionData(dirPath, dp, loadData, directory, changelog));
             }
+            //Add all the files
+            IEnumerable<string> fileNames = System.IO.Directory.EnumerateFiles(path).Select(Path.GetFileName);
             foreach (string file in fileNames)
             {
                 string fp = Path.Combine(filePath, file);
@@ -71,14 +96,23 @@ namespace EChestVC.Directory.Load
             return datas;
         }
 
-        private static VersionData LoadFile(string path, string dirPath, string filepath, bool loadData, DirectoryStructure directory, Changelog changelog)
+        /// <summary>
+        /// Loads a folder from the file directory into a VersionData
+        /// </summary>
+        /// <param name="dirPath">The absolute path to the version directory in which all files are contained</param>
+        /// <param name="filepath">The relative path to a file or directory from dirpath</param>
+        /// <param name="loadData">Whether or not to read the files</param>
+        /// <param name="directory">The content directory from which to read</param>
+        /// <param name="changelog">An optional Changelog parameter to fill in hashes</param>
+        /// <returns></returns>
+        private static VersionData LoadFile(string dirPath, string filepath, bool loadData, 
+            DirectoryStructure directory, Changelog changelog)
         {
+            string path = Path.Combine(dirPath, filepath);
             string filename = Path.GetFileName(path);
             if (loadData)
             {
                 FileStream fs = new FileStream(path, FileMode.Open);
-                //using StreamReader test = new StreamReader(fs);
-                //string t = test.ReadToEnd();
                 if (changelog == null)
                 {
                     return new VersionData(filename, fs);
@@ -104,12 +138,27 @@ namespace EChestVC.Directory.Load
             }
         }
 
-        public static VersionData LoadTopLevelVD(string dirPath, string versionHash, bool loadData, DirectoryStructure directory, Changelog changelog = null)
+        /// <summary>
+        /// Loads the VersionData that contains all child elements; i.e. the root node
+        /// </summary>
+        /// <param name="dirPath">The absolute path to the version directory in which all files are contained</param>
+        /// <param name="rootName">The filename of the root VersionData</param>
+        /// <param name="loadData">Whether or not to read the files</param>
+        /// <param name="directory">The content directory from which to read</param>
+        /// <param name="changelog">An optional Changelog parameter to fill in hashes</param>
+        /// <returns></returns>
+        public static VersionData LoadTopLevelVD(string dirPath, string rootName, bool loadData, 
+            DirectoryStructure directory, Changelog changelog = null)
         {
-            VDKeyedCollection datas = GetVersionDatas(dirPath, dirPath, "", loadData, directory, changelog);
-            return new VersionData(versionHash, datas);
+            VDKeyedCollection datas = GetVersionDatas(dirPath, "", loadData, directory, changelog);
+            return new VersionData(rootName, datas);
         }
 
+        /// <summary>
+        /// Creates a file in the file directory from data
+        /// </summary>
+        /// <param name="directory">The directory which will contain the created file</param>
+        /// <param name="data">The VersionData to create the file</param>
         public static void CreateVersionData(string directory, VersionData data)
         {
             if (data == null)
