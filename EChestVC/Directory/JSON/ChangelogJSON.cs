@@ -8,6 +8,9 @@ using System.Text.Json.Serialization;
 
 namespace EChestVC.Directory.JSON
 {
+    /// <summary>
+    /// Object to be serialized and deserialized between JSON and Changelog
+    /// </summary>
     class ChangelogJSON
     {
         public string Hash { get; set; }
@@ -36,48 +39,46 @@ namespace EChestVC.Directory.JSON
                         ).ToArray();
         }
 
-        public Changelog GetChangelog(DirectoryStructure directory)
+        /// <summary>
+        /// Converts this object to a Changelog object
+        /// </summary>
+        /// <returns></returns>
+        public Changelog GetChangelog()
         {
-            Dictionary<string, string> added;
-            Dictionary<string, string> modified;
-            HashSet<string> removed;
-            Dictionary<string, string> renamed;
             if (Hash == null)
             {
                 throw new FormatException("Hash should not be null");
             }
-            if (Added != null)
-            {
-                var addedVals = from r in Added select new KeyValuePair<string, string>(r[0], r[1]);
-                added = new Dictionary<string, string>(addedVals);
-            } else
-            {
-                added = new Dictionary<string, string>();
-            }
-            if (Modified != null)
-            {
-                var modifiedVals = from r in Modified select new KeyValuePair<string, string>(r[0], r[1]);
-                modified = new Dictionary<string, string>(modifiedVals);
-            } else
-            {
-                modified = new Dictionary<string, string>();
-            }
-            if (Removed != null)
-            {
-                removed = new HashSet<string>(Removed);
-            } else
-            {
-                removed = new HashSet<string>();
-            }
-            if (Renamed != null)
-            {
-                var renamedVals = from r in Renamed select new KeyValuePair<string, string>(r[0], r[1]);
-                renamed = new Dictionary<string, string>(renamedVals);
-            } else
-            {
-                renamed = new Dictionary<string, string>();
-            }
+            Dictionary<string, string> added = ConvertToDictionary(Added);
+            Dictionary<string, string> modified = ConvertToDictionary(Modified);
+            HashSet<string> removed = ConvertToHashSet(Removed);
+            Dictionary<string, string> renamed = ConvertToDictionary(Renamed);
             return new Changelog(modified, added, removed, renamed, Hash);
+        }
+
+        private Dictionary<string, string> ConvertToDictionary(string[][] values)
+        {
+            if (values != null)
+            {
+                var vals = from r in values select new KeyValuePair<string, string>(r[0], r[1]);
+                return new Dictionary<string, string>(vals);
+            }
+            else
+            {
+                return new Dictionary<string, string>();
+            }
+        }
+
+        private HashSet<string> ConvertToHashSet(string[] values)
+        {
+            if (values != null)
+            {
+                return new HashSet<string>(values);
+            }
+            else
+            {
+                return new HashSet<string>();
+            }
         }
     }
 }

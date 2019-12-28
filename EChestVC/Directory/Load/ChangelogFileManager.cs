@@ -10,7 +10,7 @@ namespace EChestVC.Directory.Load
 {
     static class ChangelogFileManager
     {
-        public static Changelog LoadChangelog(string filepath, DirectoryStructure directory)
+        public static Changelog LoadChangelog(string filepath)
         {
             string json;
             ChangelogJSON changelog;
@@ -31,7 +31,7 @@ namespace EChestVC.Directory.Load
             {
                 throw new FormatException("Could not deserialize " + filepath);
             }
-            return changelog.GetChangelog(directory);
+            return changelog.GetChangelog();
         }
 
         public static void CreateChangelog(string directory, string filename, Changelog changelog)

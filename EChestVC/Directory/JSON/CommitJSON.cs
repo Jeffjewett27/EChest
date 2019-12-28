@@ -9,6 +9,9 @@ using Version = EChestVC.Model.Version;
 
 namespace EChestVC.Directory.JSON
 {
+    /// <summary>
+    /// Object to be serialized and deserialized between JSON and Commit
+    /// </summary>
     class CommitJSON
     {
         public string Hash { get; set; }
@@ -31,6 +34,12 @@ namespace EChestVC.Directory.JSON
             Metadata = new CommitMetadataJSON(commit.Metadata);
         }
 
+        /// <summary>
+        /// Converts this object to a Commit object
+        /// </summary>
+        /// <param name="directory">The directory dependency for proxies</param>
+        /// <param name="loader">The loader object which specifies which objects to load</param>
+        /// <returns></returns>
         public Commit GetCommit(DirectoryStructure directory, CommitDependencyLoader loader)
         {
             Commit[] parents = new Commit[Parents.Length];
@@ -59,6 +68,11 @@ namespace EChestVC.Directory.JSON
             return new Commit(parents, changelog, version, metadata, Hash);
         }
 
+        /// <summary>
+        /// Converts this object to a Commit object
+        /// </summary>
+        /// <param name="directory">The directory dependency for proxies</param>
+        /// <returns></returns>
         public Commit GetCommit(DirectoryStructure directory)
         {
             Commit[] parents = Parents.Select(p => new CommitProxy(p, directory)).ToArray();

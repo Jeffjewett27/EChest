@@ -29,7 +29,7 @@ namespace EChestVC.Directory
         public Changelog GetChangelog(string hash)
         {
             string filepath = Path.Combine(path, CHANGELOG_PATH, hash + CHANGELOG_EXT);
-            return ChangelogFileManager.LoadChangelog(filepath, this);
+            return ChangelogFileManager.LoadChangelog(filepath);
         }
 
         public void CreateChangelog(Changelog changelog)
