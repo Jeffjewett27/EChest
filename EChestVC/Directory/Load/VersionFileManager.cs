@@ -64,5 +64,39 @@ namespace EChestVC.Directory.Load
                 VersionDataFileManager.CreateVersionData(path, child);
             }
         }
+
+        /// <summary>
+        /// Aggregates files from various Versions into one Version
+        /// </summary>
+        /// <param name="aggregated"></param>
+        /// <param name="directory"></param>
+        /// <returns></returns>
+        public static Version AggregateVersion(AggregatedChangelog aggregated, DirectoryStructure directory)
+        {
+            var versions = new Dictionary<string, Version>();
+            VersionBuilder builder = new VersionBuilder();
+            Action<Dictionary<string, Tuple<string, string>>> build = vals =>
+            {
+                foreach (var val in vals)
+                {
+                    string versionHash = val.Value.Item2;
+                    Version v;
+                    if (versions.ContainsKey(versionHash))
+                    {
+                        v = versions[versionHash];
+                    }
+                    else
+                    {
+                        v = directory.GetVersion(versionHash);
+                        versions.Add(v.Hash, v);
+                    }
+                    var vdata = v.GetVersionData(val.Key);
+                    builder.AddVersionData(val.Key, vdata);
+                }
+            };
+            build(aggregated.Added);
+            build(aggregated.Modified);
+            return builder.GetVersion();
+        }
     }
 }

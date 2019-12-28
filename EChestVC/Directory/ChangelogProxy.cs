@@ -5,11 +5,16 @@ using EChestVC.Model;
 
 namespace EChestVC.Directory
 {
+    /// <summary>
+    /// A proxy of Changelog to lazy load Added, Modified, Removed, and Renamed
+    /// </summary>
     class ChangelogProxy : Changelog
     {
         private Changelog changelog;
         private DirectoryStructure directory;
-
+ 
+        /// <param name="hash">The changelog's hash</param>
+        /// <param name="directory">The directory to load dependencies</param>
         public ChangelogProxy(string hash, DirectoryStructure directory) : base(hash)
         {
             changelog = null;
@@ -50,6 +55,9 @@ namespace EChestVC.Directory
             }
         }
 
+        /// <summary>
+        /// Loads the changelog to access Added, Modified, Removed, and Renamed
+        /// </summary>
         private void Load()
         {
             changelog = directory.GetChangelog(Hash);

@@ -86,7 +86,7 @@ namespace EChestVC.Directory
 
         private void Load()
         {
-            data = directory.GetVersionData(versionHash, filepath, true, directory);
+            data = directory.GetVersionData(versionHash, filepath, true);
         }
     }
 }

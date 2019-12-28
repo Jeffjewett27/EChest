@@ -21,17 +21,30 @@ namespace EChestVC.Directory
         private const string WORKING_PATH = "WorkingDirectory";
         private readonly string path;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="path">The absolute path to the root of the DirectoryStructure</param>
         public DirectoryStructure(string path)
         {
             this.path = path;
         }
 
+        /// <summary>
+        /// Loads a Changelog
+        /// </summary>
+        /// <param name="hash">The hash of the changelog to load</param>
+        /// <returns></returns>
         public Changelog GetChangelog(string hash)
         {
             string filepath = Path.Combine(path, CHANGELOG_PATH, hash + CHANGELOG_EXT);
             return ChangelogFileManager.LoadChangelog(filepath);
         }
 
+        /// <summary>
+        /// Saves a Changelog to the file directory
+        /// </summary>
+        /// <param name="changelog"></param>
         public void CreateChangelog(Changelog changelog)
         {
             if (changelog == null)
@@ -43,6 +56,10 @@ namespace EChestVC.Directory
             ChangelogFileManager.CreateChangelog(directory, filename, changelog);
         }
 
+        /// <summary>
+        /// Deletes a Changelog from the file directory
+        /// </summary>
+        /// <param name="changelog"></param>
         public void DeleteChangelog(Changelog changelog)
         {
             if (changelog == null)
@@ -54,12 +71,22 @@ namespace EChestVC.Directory
             ChangelogFileManager.DeleteChangelog(directory, filename);
         }
 
+        /// <summary>
+        /// Loads a Commit from the file directory
+        /// </summary>
+        /// <param name="hash">The hash of the Commit to load</param>
+        /// <param name="loader">The loading dependencies for the commit</param>
+        /// <returns></returns>
         public Commit GetCommit(string hash, CommitDependencyLoader loader = null)
         {
             string filepath = Path.Combine(path, COMMIT_PATH, hash + COMMIT_EXT);
             return CommitFileManager.LoadCommit(filepath, this, loader);
         }
 
+        /// <summary>
+        /// Saves a Commit to the file directory
+        /// </summary>
+        /// <param name="commit"></param>
         public void CreateCommit(Commit commit)
         {
             if (commit == null)
@@ -71,6 +98,10 @@ namespace EChestVC.Directory
             CommitFileManager.CreateCommit(directory, filename, commit);
         }
 
+        /// <summary>
+        /// Deletes a Commit from the file directory
+        /// </summary>
+        /// <param name="commit"></param>
         public void DeleteCommit(Commit commit)
         {
             if (commit == null)
@@ -82,10 +113,18 @@ namespace EChestVC.Directory
             CommitFileManager.DeleteCommit(directory, filename);
         }
 
-        public VersionData GetVersionData(string versionHash, string filepath, bool loadData, DirectoryStructure directory, Changelog changelog = null)
+        /// <summary>
+        /// Loads a VersionData from the file directory
+        /// </summary>
+        /// <param name="versionHash">The hash of the Version the VersionData is contained in</param>
+        /// <param name="filepath">The relative path from the Version</param>
+        /// <param name="loadData">Whether to read the file</param>
+        /// <param name="changelog">An optional parameter to load the hash from the changelog</param>
+        /// <returns></returns>
+        public VersionData GetVersionData(string versionHash, string filepath, bool loadData, Changelog changelog = null)
         {
             string dirPath = Path.Combine(path, VERSION_PATH, versionHash);
-            return VersionDataFileManager.LoadVersionData(dirPath, filepath, loadData, directory, changelog);
+            return VersionDataFileManager.LoadVersionData(dirPath, filepath, loadData, this, changelog);
         }
 
         /// <summary>
@@ -112,44 +151,34 @@ namespace EChestVC.Directory
             return VersionFileManager.LoadVersion(hash, filepath, this, false, changelog);
         }
 
+        /// <summary>
+        /// Saves a Version to the file directory
+        /// </summary>
+        /// <param name="version"></param>
         public void CreateVersion(Version version)
         {
             string directory = Path.Combine(path, VERSION_PATH);
             VersionFileManager.CreateVersion(directory, version.Hash, version);
         }
 
+        /// <summary>
+        /// Loads a Version from the Working Directory
+        /// </summary>
+        /// <returns></returns>
         public Version GetWorkingVersion()
         {
             string dirpath = Path.Combine(path, WORKING_PATH);
             return VersionFileManager.LoadVersion(dirpath, this, true);
         }
 
+        /// <summary>
+        /// Aggregates files from various Versions into one Version
+        /// </summary>
+        /// <param name="aggregated"></param>
+        /// <returns></returns>
         public Version AggregateVersion(AggregatedChangelog aggregated)
         {
-            var versions = new Dictionary<string, Version>();
-            VersionBuilder builder = new VersionBuilder();
-            Action<Dictionary<string, Tuple<string, string>>> build = vals =>
-            {
-                foreach (var val in vals)
-                {
-                    string versionHash = val.Value.Item2;
-                    Version v;
-                    if (versions.ContainsKey(versionHash))
-                    {
-                        v = versions[versionHash];
-                    }
-                    else
-                    {
-                        v = GetVersion(versionHash);
-                        versions.Add(v.Hash, v);
-                    }
-                    var vdata = v.GetVersionData(val.Key);
-                    builder.AddVersionData(val.Key, vdata);
-                }
-            };
-            build(aggregated.Added);
-            build(aggregated.Modified);
-            return builder.GetVersion();
+            return VersionFileManager.AggregateVersion(aggregated, this);
         }
     }
 }

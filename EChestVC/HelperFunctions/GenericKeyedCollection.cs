@@ -12,11 +12,7 @@ namespace EChestVC.HelperFunctions
         public GenericKeyedCollection(Func<TVal, TKey> itemKey, IEqualityComparer<TKey> comparer = null, int threshold = 0) 
             : base(comparer, threshold)
         {
-            if (itemKey == null)
-            {
-                throw new ArgumentNullException("itemkey");
-            }
-            this.itemKey = itemKey;
+            this.itemKey = itemKey ?? throw new ArgumentNullException("itemkey");
         }
 
         protected override TKey GetKeyForItem(TVal item)
