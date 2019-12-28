@@ -4,6 +4,9 @@ using System.Text;
 
 namespace EChestVC.Model
 {
+    /// <summary>
+    /// Stores information about which files have been Added, Modified, Removed, or Renamed
+    /// </summary>
     public class Changelog
     {
         public enum Type
@@ -13,36 +16,64 @@ namespace EChestVC.Model
             Removed,
             Renamed
         }
-        private Dictionary<string, string> modified;
-        private Dictionary<string, string> added;
-        private HashSet<string> removed;
-        private Dictionary<string, string> renamed;
+        //Modified: <filename, hash>
+        private readonly Dictionary<string, string> modified;
+        //Added: <filename, hash>
+        private readonly Dictionary<string, string> added;
+        //Removed: <filename>
+        private readonly HashSet<string> removed;
+        //Renamed: <oldName, newName>
+        private readonly Dictionary<string, string> renamed;
         private string hash;
 
+        /// <summary>
+        /// A collection of <filename, hash> pairs for modified files
+        /// </summary>
         public virtual Dictionary<string, string> Modified { get => modified; }
+        /// <summary>
+        /// A collection of <filename, hash> pairs for added files
+        /// </summary>
         public virtual Dictionary<string, string> Added { get => added; }
+        /// <summary>
+        /// A collection of filenames for removed files
+        /// </summary>
         public virtual HashSet<string> Removed { get => removed; }
+        /// <summary>
+        /// A collection of <oldName, newName> pairs for renamed files
+        /// </summary>
         public virtual Dictionary<string, string> Renamed { get => renamed; }
         public string Hash { get => hash; }
 
-        public Changelog(Dictionary<string, string> m, Dictionary<string, string> a, HashSet<string> rem, Dictionary<string, string> ren)
+        /// <param name="modified">A collection of <filename, hash> pairs for modified files</param>
+        /// <param name="added">A collection of <filename, hash> pairs for added files</param>
+        /// <param name="removed">A collection of filenames for removed files</param>
+        /// <param name="renamed">A collection of <oldName, newName> pairs for renamed files</param>
+        public Changelog(Dictionary<string, string> modified, Dictionary<string, string> added, HashSet<string> removed, 
+            Dictionary<string, string> renamed)
         {
-            modified = m;
-            added = a;
-            removed = rem;
-            renamed = ren;
+            this.modified = modified;
+            this.added = added;
+            this.removed = removed;
+            this.renamed = renamed;
             hash = GetHash();
         }
 
-        public Changelog(Dictionary<string, string> m, Dictionary<string, string> a, HashSet<string> rem, Dictionary<string, string> ren, string hash)
+        /// <param name="modified">A collection of <filename, hash> pairs for modified files</param>
+        /// <param name="added">A collection of <filename, hash> pairs for added files</param>
+        /// <param name="removed">A collection of filenames for removed files</param>
+        /// <param name="renamed">A collection of <oldName, newName> pairs for renamed files</param>
+        /// <param name="hash">The Changelog's hash</param>
+        public Changelog(Dictionary<string, string> modified, Dictionary<string, string> added, HashSet<string> removed,
+            Dictionary<string, string> renamed, string hash)
         {
-            modified = m;
-            added = a;
-            removed = rem;
-            renamed = ren;
+            this.modified = modified;
+            this.added = added;
+            this.removed = removed;
+            this.renamed = renamed;
             this.hash = hash;
         }
 
+        /// <param name="hash">The Changelog's hash</param>
         public Changelog(string hash)
         {
             modified = new Dictionary<string, string>();
@@ -71,6 +102,12 @@ namespace EChestVC.Model
             return Add(EmptyChangelog(), changelog);
         }
 
+        /// <summary>
+        /// Combines two Changelogs
+        /// </summary>
+        /// <param name="one"></param>
+        /// <param name="two"></param>
+        /// <returns></returns>
         public static Changelog Add(Changelog one, Changelog two)
         {
             Dictionary<string, string> mod = new Dictionary<string, string>();
@@ -112,6 +149,10 @@ namespace EChestVC.Model
             return new Changelog(mod, add, rem, ren);
         }
 
+        /// <summary>
+        /// Gets the Changelog's hash
+        /// </summary>
+        /// <returns></returns>
         private string GetHash()
         {
             StringBuilder sb = new StringBuilder("changelog");
@@ -137,6 +178,11 @@ namespace EChestVC.Model
             return Model.Hash.ComputeHash(sb.ToString());
         }
 
+        /// <summary>
+        /// Gets the hash value from the filepath key in Added or Modified
+        /// </summary>
+        /// <param name="filepath"></param>
+        /// <returns></returns>
         public virtual string GetCachedHash(string filepath)
         {
             if (Added.TryGetValue(filepath, out string hash))

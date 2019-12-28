@@ -6,6 +6,9 @@ using System.IO;
 
 namespace EChestVC.Model
 {
+    /// <summary>
+    /// Methods for computing the SHA256 hash
+    /// </summary>
     static class Hash
     {
         public static string ComputeHash(string input)
@@ -31,6 +34,11 @@ namespace EChestVC.Model
             return hash;
         }
 
+        /// <summary>
+        /// Returns the hash in the form of a hexadecimal string
+        /// </summary>
+        /// <param name="hasher"></param>
+        /// <returns></returns>
         private static string HashToHex(HashAlgorithm hasher)
         {
             StringBuilder sb = new StringBuilder();

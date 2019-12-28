@@ -5,6 +5,9 @@ using System.Text;
 
 namespace EChestVC.Model
 {
+    /// <summary>
+    /// Represents a keyed collection of VersionData, with the key being the filename
+    /// </summary>
     public class VDKeyedCollection : KeyedCollection<string, VersionData>
     {
         public VDKeyedCollection()
@@ -18,6 +21,10 @@ namespace EChestVC.Model
             return item.Filename;
         }
 
+        /// <summary>
+        /// Generates the hash of this collection
+        /// </summary>
+        /// <returns></returns>
         public string GetHash()
         {
             string hash = "hash";

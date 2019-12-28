@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace EChestVC.Model
@@ -51,6 +52,11 @@ namespace EChestVC.Model
             return new Commit();
         }
 
+        /// <summary>
+        /// Gets a Changelog of the differences between two commits since their least common ancestor
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
         public virtual Changelog DivergentChangelog(Commit other)
         {
             Commit ancestor = LeastCommonAncestor(other);
@@ -100,6 +106,12 @@ namespace EChestVC.Model
             return aggregate;
         }
 
+        /// <summary>
+        /// Finds the Commit who is the least common ancestor of this Commit and other 
+        /// (who can be reached by traveling up any parent)
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
         public Commit LeastCommonAncestor(Commit other)
         {
             if (other.commitHash == commitHash)
@@ -146,21 +158,37 @@ namespace EChestVC.Model
             return branches.First.Value;
         }
 
+        /// <summary>
+        /// Gets an array of this Commit's Parents' hashes
+        /// </summary>
+        /// <returns></returns>
         private string[] GetParentHashes()
         {
-            return null;
+            return (from p in Parents select p.Hash).ToArray();
         }
 
+        /// <summary>
+        /// Gets the hash of this Commit's Version
+        /// </summary>
+        /// <returns></returns>
         private string GetVersionHash()
         {
-            return null;
+            return Version.Hash;
         }
 
+        /// <summary>
+        /// Gets the hash of this Commit's Changelog
+        /// </summary>
+        /// <returns></returns>
         private string GetChangelogHash()
         {
-            return null;
+            return Changelog.Hash;
         }
 
+        /// <summary>
+        /// Generates this Commit's hash
+        /// </summary>
+        /// <returns></returns>
         private string GenerateHash()
         {
             if (commitHash != null)

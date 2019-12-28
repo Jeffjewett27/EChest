@@ -5,6 +5,9 @@ using System.Text;
 
 namespace EChestVC.Model
 {
+    /// <summary>
+    /// Represents a file or a directory in a tree structure
+    /// </summary>
     public class VersionData
     {
         public enum FileType
@@ -29,13 +32,11 @@ namespace EChestVC.Model
         public string Filename => filename;
         public virtual string Hash => hash;
         public FileType Filetype => filetype;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="filename">The relative path from the version directory</param>
-        /// <param name="data"></param>
-        /// <param name="hash"></param>
+        
+        /// <summary>Constructs a VersionData of type FileType.File</summary>
+        /// <param name="filename">Just the filename, with no preceding directories</param>
+        /// <param name="data">The stream of this file's content</param>
+        /// <param name="hash">This VersionData's hash</param>
         public VersionData(string filename, Stream data, string hash)
         {
             this.data = data;
@@ -44,12 +45,9 @@ namespace EChestVC.Model
             this.filetype = FileType.File;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="filename">The relative path from the version directory</param>
-        /// <param name="data"></param>
-        /// <param name="hash"></param>
+        /// <summary>Constructs a VersionData of type FileType.File</summary>
+        /// <param name="filename">Just the filename, with no preceding directories</param>
+        /// <param name="data">The stream of this file's content</param>
         public VersionData(string filename, Stream data)
         {
             this.data = data;
@@ -58,6 +56,10 @@ namespace EChestVC.Model
             this.hash = GetHash();
         }
 
+        /// <summary>Constructs a VersionData of type FileType.Directory</summary>
+        /// <param name="filename">Just the filename, with no preceding directories</param>
+        /// <param name="children">The VersionDatas contained in this directory</param>
+        /// <param name="hash">This VersionData's hash</param>
         public VersionData(string filename, VDKeyedCollection children, string hash)
         {
             this.filename = filename;
@@ -65,6 +67,9 @@ namespace EChestVC.Model
             this.hash = hash;
         }
 
+        /// <summary>Constructs a VersionData of type FileType.Directory</summary>
+        /// <param name="filename">Just the filename, with no preceding directories</param>
+        /// <param name="children">The VersionDatas contained in this directory</param>
         public VersionData(string filename, VDKeyedCollection children)
         {
             this.filename = filename;
@@ -73,6 +78,10 @@ namespace EChestVC.Model
             this.hash = GetHash();
         }
 
+        /// <summary>
+        /// Generates this VersionData's hash
+        /// </summary>
+        /// <returns></returns>
         private string GetHash()
         {
             if (filetype == FileType.Directory)
@@ -84,6 +93,11 @@ namespace EChestVC.Model
             }
         }
 
+        /// <summary>
+        /// Searches recursively for a VersionData of a given filepath
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         public VersionData PathGetFile(string path)
         {
             //path example: thisfilename/childfilename/morestuff
@@ -113,6 +127,13 @@ namespace EChestVC.Model
             }
         }
 
+        /// <summary>
+        /// Recursively builds a Changelog by comparing each directory to its analogue and finding differences
+        /// </summary>
+        /// <param name="original"></param>
+        /// <param name="update"></param>
+        /// <param name="prefix"></param>
+        /// <returns></returns>
         public static ChangelogBuilder BuildChangelog(VersionData original, VersionData update, string prefix = "")
         {
             ChangelogBuilder changelog = new ChangelogBuilder();
@@ -154,6 +175,13 @@ namespace EChestVC.Model
             return changelog;
         }
 
+        /// <summary>
+        /// Selects all files that were altered in some way (added, modified, removed, or renamed)
+        /// </summary>
+        /// <param name="thisVD"></param>
+        /// <param name="otherVD"></param>
+        /// <param name="byName"></param>
+        /// <param name="byHash"></param>
         private static void AddAlteredFiles(VDKeyedCollection thisVD, VDKeyedCollection otherVD, VDKeyedCollection
                 byName, Dictionary<string, LinkedList<string>> byHash)
         {
@@ -186,6 +214,9 @@ namespace EChestVC.Model
             }
         }
 
+        /// <summary>
+        /// Finds objects of the same hash but different names
+        /// </summary>
         private static void FindRenames(ChangelogBuilder changelog, string prefix, VDKeyedCollection byName, 
             VDKeyedCollection otherByName, Dictionary<string, LinkedList<string>> byHash, 
             Dictionary<string, LinkedList<string>> otherByHash)
@@ -212,6 +243,9 @@ namespace EChestVC.Model
             }
         }
 
+        /// <summary>
+        /// Finds objects of the same name, but different hashes
+        /// </summary>
         private static void FindModifieds(ChangelogBuilder changelog, string prefix, VDKeyedCollection byName, 
             VDKeyedCollection otherByName)
         {
@@ -242,6 +276,9 @@ namespace EChestVC.Model
             }
         }
 
+        /// <summary>
+        /// Finds objects that exist in one collection but not the other
+        /// </summary>
         private static void FindAddRemoveds(ChangelogBuilder changelog, string prefix, VDKeyedCollection byName, 
             VDKeyedCollection otherByName)
         {
@@ -272,6 +309,9 @@ namespace EChestVC.Model
             return VersionDataPath.PrefixFilename(prefix, filename);
         }
 
+        /// <summary>
+        /// Removes all descendant files of a Directory to a changelog
+        /// </summary>
         private static void AggregateRemove(ChangelogBuilder changelog, string prefix, VersionData original)
         {
             foreach (var child in original.Children)
@@ -286,6 +326,9 @@ namespace EChestVC.Model
             }
         }
 
+        /// <summary>
+        /// Adds all descendant files of a Directory to a changelog
+        /// </summary>
         private static void AggregateAdd(ChangelogBuilder changelog, string prefix, VersionData update)
         {
             foreach (var child in update.Children)
@@ -300,6 +343,12 @@ namespace EChestVC.Model
             }
         }
 
+        /// <summary>
+        /// Returns a VersionData that contains only those children contained in a changelog
+        /// </summary>
+        /// <param name="changelog"></param>
+        /// <param name="prefix"></param>
+        /// <returns></returns>
         public VersionData Trim(Changelog changelog, string prefix = "")
         {
             if (Filetype != FileType.Directory)

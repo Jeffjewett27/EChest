@@ -207,6 +207,10 @@ namespace EChestVC.Model
             }
         }
 
+        /// <summary>
+        /// Converts this to a Changelog
+        /// </summary>
+        /// <returns></returns>
         public Changelog GetChangelog()
         {
             var added = new Dictionary<string, string>();

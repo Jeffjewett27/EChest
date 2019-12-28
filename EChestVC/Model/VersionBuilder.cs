@@ -5,8 +5,14 @@ using EChestVC.HelperFunctions;
 
 namespace EChestVC.Model
 {
+    /// <summary>
+    /// Builds up a Version (which is an immutable type)
+    /// </summary>
     public class VersionBuilder
     {
+        /// <summary>
+        /// A mutable wrapper for a VersionData tree
+        /// </summary>
         private class DataNode
         {
             public string filename;
@@ -39,6 +45,11 @@ namespace EChestVC.Model
             AddDataDirectory(version.Data, root);
         }
 
+        /// <summary>
+        /// Adds all the descendants of vdata to root
+        /// </summary>
+        /// <param name="vdata"></param>
+        /// <param name="node"></param>
         private void AddDataDirectory(VersionData vdata, DataNode node)
         {
             if (vdata.Filetype != VersionData.FileType.Directory)
@@ -56,6 +67,11 @@ namespace EChestVC.Model
             }
         }
 
+        /// <summary>
+        /// Adds a VersionData to the tree in its specified path
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="vdata"></param>
         public void AddVersionData(string path, VersionData vdata)
         {
             string[] directoryPath = VersionDataPath.SplitDirectories(path);
@@ -79,12 +95,21 @@ namespace EChestVC.Model
             }
         }
 
+        /// <summary>
+        /// Converts this to a Version
+        /// </summary>
+        /// <returns></returns>
         public Version GetVersion()
         {
             var vdata = GetDirectoryData(root);
             return new Version(vdata);
         }
 
+        /// <summary>
+        /// Converts a DataNode and all descendants to a VersionData
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
         private VersionData GetDirectoryData(DataNode node)
         {
             VDKeyedCollection children = new VDKeyedCollection();
