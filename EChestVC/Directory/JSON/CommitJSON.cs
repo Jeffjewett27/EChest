@@ -63,7 +63,8 @@ namespace EChestVC.Directory.JSON
                 directory.GetVersion(Hash, loader.LoadVersionData) :
                 new VersionProxy(Version, directory);
 
-            CommitMetadata metadata = Metadata != null ? Metadata.GetMetadata() : new CommitMetadata();
+            CommitMetadata metadata = Metadata != null ? Metadata.GetMetadata() 
+                : throw new FormatException("Commit must contain metadata");
 
             return new Commit(parents, changelog, version, metadata, Hash);
         }
@@ -79,7 +80,8 @@ namespace EChestVC.Directory.JSON
             Changelog changelog = new ChangelogProxy(Changelog, directory);
             Version version = new VersionProxy(Version, directory);
 
-            CommitMetadata metadata = Metadata != null ? Metadata.GetMetadata() : new CommitMetadata();
+            CommitMetadata metadata = Metadata != null ? Metadata.GetMetadata()
+                : throw new FormatException("Commit must contain metadata");
 
             return new Commit(parents, changelog, version, metadata, Hash);
         }

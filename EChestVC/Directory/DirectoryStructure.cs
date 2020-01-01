@@ -19,6 +19,7 @@ namespace EChestVC.Directory
         private const string CHANGELOG_EXT = ".json";
         private const string COMMIT_EXT = ".json";
         private const string WORKING_PATH = "WorkingDirectory";
+        private const string HEAD_PATH = "HEAD.json";
         private readonly string path;
 
         /// <summary>
@@ -179,6 +180,12 @@ namespace EChestVC.Directory
         public Version AggregateVersion(AggregatedChangelog aggregated)
         {
             return VersionFileManager.AggregateVersion(aggregated, this);
+        }
+
+        public Head GetHead()
+        {
+            string filepath = Path.Combine(path, HEAD_PATH);
+            return HeadFileManager.LoadHead(filepath, this);
         }
     }
 }

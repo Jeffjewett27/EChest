@@ -30,12 +30,30 @@ namespace EChestVC.Model
             this.changelog = changelog;
             this.metadata = metadata;
             this.version = version;
-            GenerateHash();
+            commitHash = GenerateHash();
         }
 
         public Commit(Commit[] parents, Changelog changelog, Version version, CommitMetadata metadata, string hash)
         {
             this.parents = parents;
+            this.changelog = changelog;
+            this.metadata = metadata;
+            this.version = version;
+            commitHash = hash;
+        }
+
+        public Commit(Commit parent, Changelog changelog, Version version, CommitMetadata metadata)
+        {
+            parents = new Commit[] { parent };
+            this.changelog = changelog;
+            this.metadata = metadata;
+            this.version = version;
+            commitHash = GenerateHash();
+        }
+
+        public Commit(Commit parent, Changelog changelog, Version version, CommitMetadata metadata, string hash)
+        {
+            parents = new Commit[] { parent };
             this.changelog = changelog;
             this.metadata = metadata;
             this.version = version;
@@ -92,7 +110,7 @@ namespace EChestVC.Model
         /// <returns></returns>
         public AggregatedChangelog AggregateChangelog()
         {
-            if (Parents[0].IsNull)
+            if (Parents.Length == 0 || Parents[0].IsNull)
             {
                 return new AggregatedChangelog(Hash, Changelog);
             }
@@ -191,10 +209,6 @@ namespace EChestVC.Model
         /// <returns></returns>
         private string GenerateHash()
         {
-            if (commitHash != null)
-            {
-                return commitHash;
-            }
             StringBuilder sum = new StringBuilder();
             sum.Append(GetVersionHash());
             sum.Append(GetChangelogHash());

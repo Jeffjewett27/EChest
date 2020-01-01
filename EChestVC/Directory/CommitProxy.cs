@@ -49,7 +49,7 @@ namespace EChestVC.Directory
 
         /// <param name="hash">This Commit's hash</param>
         /// <param name="directory">The directory to load dependencies</param>
-        public CommitProxy(string hash, DirectoryStructure directory) : base(null, null, null, null, hash)
+        public CommitProxy(string hash, DirectoryStructure directory) : base((Commit[])null, null, null, null, hash)
         {
             this.directory = directory;
         }

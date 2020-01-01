@@ -10,9 +10,14 @@ namespace EChestVC.Directory.JSON
     /// </summary>
     class CommitMetadataJSON
     {
+        public string Message { get; set; }
+
         public CommitMetadataJSON(CommitMetadata metadata)
         {
+            Message = metadata.Message;
         }
+
+        public CommitMetadataJSON() { }
 
         /// <summary>
         /// Converts this object into a CommitMetadata object
@@ -20,7 +25,7 @@ namespace EChestVC.Directory.JSON
         /// <returns></returns>
         public CommitMetadata GetMetadata()
         {
-            return new CommitMetadata();
+            return new CommitMetadata(Message);
         }
     }
 }

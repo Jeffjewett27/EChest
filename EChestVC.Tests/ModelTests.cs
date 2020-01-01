@@ -1,6 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using EChestVC.Model;
 using EChestVC.Directory;
+using EChestVC.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -80,7 +81,7 @@ namespace EChestVC.Tests
         {
             string cpath = path + "\\Commits\\test.json";
             Commit c = new Commit(new Commit[] { directory.GetCommit("init") }, directory.GetChangelog("initChild"), directory.GetVersion("initChild"), 
-                new CommitMetadata(), "test");
+                new CommitMetadata(""), "test");
             directory.CreateCommit(c);
             Assert.IsTrue(File.Exists(cpath));
             string text = File.ReadAllText(cpath);
@@ -109,6 +110,13 @@ namespace EChestVC.Tests
             Version v = directory.AggregateVersion(aggregated);
             test = "";
             directory.CreateVersion(v);
+        }
+
+        [TestMethod]
+        public void CommitCommand()
+        {
+            var command = new CommitCommand(@"C:\Users\jeffr\Documents\EChest\Big Blocks\Resource Packs\Format v3");
+            command.Create("my first test");
         }
     }
 
