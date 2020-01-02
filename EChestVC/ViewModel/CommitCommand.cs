@@ -12,12 +12,12 @@ namespace EChestVC.ViewModel
     /// </summary>
     public class CommitCommand
     {
-        private DirectoryStructure directory;
+        private ProjectDirectory directory;
 
         /// <param name="path">The path of the DirectoryStructure</param>
         public CommitCommand(string path)
         {
-            directory = new DirectoryStructure(path);
+            directory = new ProjectDirectory(path);
         }
 
         public void Create(string message)
@@ -39,6 +39,8 @@ namespace EChestVC.ViewModel
             directory.CreateVersion(diffVersion);
             directory.CreateChangelog(diffChangelog);
             directory.CreateCommit(newCommit);
+            //Update the position of the HEAD
+            directory.UpdateHead(head, newCommit);
         }
     }
 }

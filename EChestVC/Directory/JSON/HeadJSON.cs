@@ -16,10 +16,10 @@ namespace EChestVC.Directory.JSON
 
         public HeadJSON() { }
 
-        public HeadJSON(string targetHash, Head.Target targetType)
+        public HeadJSON(Head head)
         {
-            TargetHash = targetHash;
-            TargetType = targetType switch
+            TargetHash = head.TargetHash;
+            TargetType = head.TargetType switch
             {
             Head.Target.Branch => BRANCH,
             Head.Target.Commit => COMMIT,

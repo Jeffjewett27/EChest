@@ -203,5 +203,17 @@ namespace EChestVC.Directory
             string headPath = Path.Combine(path, HEAD_PATH);
             HeadFileManager.CreateHead(headPath);
         }
+
+        public void ChangeHead(Commit newTarget)
+        {
+            string headPath = Path.Combine(path, HEAD_PATH);
+            HeadFileManager.ChangeHead(headPath, newTarget);
+        }
+
+        public void ChangeHead(Branch newBranch)
+        {
+            string headPath = Path.Combine(path, HEAD_PATH);
+            HeadFileManager.ChangeHead(headPath, newBranch);
+        }
     }
 }

@@ -130,5 +130,26 @@ namespace EChestVC.Model
         {
             directory.Initialize();
         }
+
+        public void UpdateHead(Head head, Commit commit)
+        {
+            if (head.TargetType != Head.Target.Branch)
+            {
+                directory.ChangeHead(commit);
+            } else
+            {
+                //directory.ChangeBranch
+            }
+        }
+
+        public void ChangeHead(Commit commit)
+        {
+            directory.ChangeHead(commit);
+        }
+
+        public void ChangeHead(Branch branch)
+        {
+            directory.ChangeHead(branch);
+        }
     }
 }
