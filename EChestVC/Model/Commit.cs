@@ -53,7 +53,7 @@ namespace EChestVC.Model
 
         public Commit(Commit parent, Changelog changelog, Version version, CommitMetadata metadata, string hash)
         {
-            parents = new Commit[] { parent };
+            parents = parent != null? new Commit[] { parent } : new Commit[0];
             this.changelog = changelog;
             this.metadata = metadata;
             this.version = version;
@@ -100,7 +100,7 @@ namespace EChestVC.Model
                 next = LCAFind(next, Parents[i]);
             }
             AggregatedChangelog aggregate = next.AncestorChangelog(ancestor);
-            aggregate.AggregateNext(commitHash, Changelog);
+            aggregate.AggregateNext(this);
             return aggregate;
         }
 
@@ -110,9 +110,13 @@ namespace EChestVC.Model
         /// <returns></returns>
         public AggregatedChangelog AggregateChangelog()
         {
+            if (IsNull)
+            {
+                return AggregatedChangelog.EmptyChangelog();
+            }
             if (Parents.Length == 0 || Parents[0].IsNull)
             {
-                return new AggregatedChangelog(Hash, Changelog);
+                return new AggregatedChangelog(this);
             }
             Commit next = Parents[0];
             for (int i = 1; i < Parents.Length; i++)
@@ -120,7 +124,7 @@ namespace EChestVC.Model
                 next = LCAFind(next, Parents[i]);
             }
             AggregatedChangelog aggregate = next.AggregateChangelog();
-            aggregate.AggregateNext(commitHash, Changelog);
+            aggregate.AggregateNext(this);
             return aggregate;
         }
 

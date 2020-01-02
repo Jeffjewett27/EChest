@@ -250,22 +250,22 @@ namespace EChestVC.Model
             VDKeyedCollection otherByName)
         {
             var toRemove = new LinkedList<string>();
-            foreach (var thisVD in otherByName)
+            foreach (var otherVD in otherByName)
             {
                 //if (byName.ContainsKey(pair.Key))
-                if (byName.Contains(thisVD.Filename))
+                if (byName.Contains(otherVD.Filename))
                 {
-                    VersionData otherVD = byName[thisVD.Filename];
-                    if (thisVD.Filetype == otherVD.Filetype)
+                    VersionData thisVD = byName[otherVD.Filename];
+                    if (otherVD.Filetype == thisVD.Filetype)
                     {
-                        string fpath = PrefixFilename(prefix, thisVD.Filename);
-                        changelog.Modify(fpath, thisVD.Hash);
-                        if (thisVD.Filetype == FileType.Directory)
+                        string fpath = PrefixFilename(prefix, otherVD.Filename);
+                        changelog.Modify(fpath, otherVD.Hash);
+                        if (otherVD.Filetype == FileType.Directory)
                         {
                             var subchangelog = BuildChangelog(thisVD, otherVD, fpath);
                             changelog.Aggregate(subchangelog);
                         }
-                        toRemove.AddLast(thisVD.Filename);
+                        toRemove.AddLast(otherVD.Filename);
                     }
                 }
             }

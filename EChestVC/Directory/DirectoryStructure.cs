@@ -187,5 +187,21 @@ namespace EChestVC.Directory
             string filepath = Path.Combine(path, HEAD_PATH);
             return HeadFileManager.LoadHead(filepath, this);
         }
+
+        public void Initialize()
+        {
+            System.IO.Directory.CreateDirectory(path);
+            string[] subdirs = new string[4];
+            subdirs[0] = Path.Combine(path, VERSION_PATH);
+            subdirs[1] = Path.Combine(path, COMMIT_PATH);
+            subdirs[2] = Path.Combine(path, CHANGELOG_PATH);
+            subdirs[3] = Path.Combine(path, WORKING_PATH);
+            foreach (string dirPath in subdirs)
+            {
+                System.IO.Directory.CreateDirectory(dirPath);
+            }
+            string headPath = Path.Combine(path, HEAD_PATH);
+            HeadFileManager.CreateHead(headPath);
+        }
     }
 }

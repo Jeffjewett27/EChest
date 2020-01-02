@@ -9,30 +9,30 @@ namespace EChestVC.Model
     /// </summary>
     public class AggregatedChangelog
     {
-        private Dictionary<string, Tuple<string, string>> modified; //file-><datahash, versionhash>
-        private Dictionary<string, Tuple<string, string>> added; //file->hash
+        private Dictionary<string, Tuple<string, Commit>> modified; //file-><datahash, versionhash>
+        private Dictionary<string, Tuple<string, Commit>> added; //file->hash
         private HashSet<string> removed; //file
         private Dictionary<string, string> renamed; //new file-> old file
 
-        public Dictionary<string, Tuple<string, string>> Modified => modified;
-        public Dictionary<string, Tuple<string, string>> Added => added;
+        public Dictionary<string, Tuple<string, Commit>> Modified => modified;
+        public Dictionary<string, Tuple<string, Commit>> Added => added;
         public HashSet<string> Removed => removed;
         public Dictionary<string, string> Renamed => renamed; 
 
-        public AggregatedChangelog(string hash, Changelog changelog)
+        public AggregatedChangelog(Commit commit)
         {
-            modified = new Dictionary<string, Tuple<string, string>>();
-            added = new Dictionary<string, Tuple<string, string>>();
+            modified = new Dictionary<string, Tuple<string, Commit>>();
+            added = new Dictionary<string, Tuple<string, Commit>>();
             removed = new HashSet<string>();
             renamed = new Dictionary<string, string>();
 
-            AggregateNext(hash, changelog);
+            AggregateNext(commit);
         }
 
         private AggregatedChangelog()
         {
-            modified = new Dictionary<string, Tuple<string, string>>();
-            added = new Dictionary<string, Tuple<string, string>>();
+            modified = new Dictionary<string, Tuple<string, Commit>>();
+            added = new Dictionary<string, Tuple<string, Commit>>();
             removed = new HashSet<string>();
             renamed = new Dictionary<string, string>();
         }
@@ -45,35 +45,33 @@ namespace EChestVC.Model
         /// <summary>
         /// Adds the next changelog to the AggregatedChangelog, keeping track of the file locations
         /// </summary>
-        /// <param name="hash"></param>
-        /// <param name="changelog"></param>
-        public void AggregateNext(string hash, Changelog changelog)
+        /// <param name="commit"></param>
+        public void AggregateNext(Commit commit)
         {
-            AggregateAdd(hash, changelog);
+            AggregateAdd(commit);
 
-            AggregateMod(hash, changelog);
+            AggregateMod(commit);
 
-            AggregateRem(hash, changelog);
+            AggregateRem(commit);
 
-            AggregateRen(hash, changelog);
+            AggregateRen(commit);
         }
 
         /// <summary>
         /// Aggregates all of changelog.Added
         /// </summary>
-        /// <param name="hash"></param>
-        /// <param name="changelog"></param>
-        private void AggregateAdd(string hash, Changelog changelog)
+        /// <param name="commit"></param>
+        private void AggregateAdd(Commit commit)
         {
-            foreach (var add in changelog.Added)
+            foreach (var add in commit.Changelog.Added)
             {
                 if (added.ContainsKey(add.Key))
                 {
-                    added[add.Key] = Tuple.Create(add.Value, hash);
+                    added[add.Key] = Tuple.Create(add.Value, commit);
                 }
                 else if (removed.Contains(add.Key))
                 {
-                    modified.Add(add.Key, Tuple.Create(add.Value, hash));
+                    modified.Add(add.Key, Tuple.Create(add.Value, commit));
                     removed.Remove(add.Key);
                 }
                 else if (modified.ContainsKey(add.Key))
@@ -82,7 +80,7 @@ namespace EChestVC.Model
                 }
                 else
                 {
-                    added.Add(add.Key, Tuple.Create(add.Value, hash));
+                    added.Add(add.Key, Tuple.Create(add.Value, commit));
                 }
             }
         }
@@ -90,15 +88,14 @@ namespace EChestVC.Model
         /// <summary>
         /// Aggregates all of changelog.Modified
         /// </summary>
-        /// <param name="hash"></param>
-        /// <param name="changelog"></param>
-        private void AggregateMod(string hash, Changelog changelog)
+        /// <param name="commit"></param>
+        private void AggregateMod(Commit commit)
         {
-            foreach (var mod in changelog.Modified)
+            foreach (var mod in commit.Changelog.Modified)
             {
                 if (added.ContainsKey(mod.Key))
                 {
-                    added[mod.Key] = Tuple.Create(mod.Value, hash);
+                    added[mod.Key] = Tuple.Create(mod.Value, commit);
                 }
                 else if (removed.Contains(mod.Key))
                 {
@@ -106,11 +103,11 @@ namespace EChestVC.Model
                 }
                 else if (modified.ContainsKey(mod.Key))
                 {
-                    modified[mod.Key] = Tuple.Create(mod.Value, hash);
+                    modified[mod.Key] = Tuple.Create(mod.Value, commit);
                 }
                 else
                 {
-                    modified.Add(mod.Key, Tuple.Create(mod.Value, hash));
+                    modified.Add(mod.Key, Tuple.Create(mod.Value, commit));
                 }
             }
         }
@@ -118,11 +115,10 @@ namespace EChestVC.Model
         /// <summary>
         /// Aggregates all of changelog.Removed
         /// </summary>
-        /// <param name="hash"></param>
-        /// <param name="changelog"></param>
-        private void AggregateRem(string hash, Changelog changelog)
+        /// <param name="commit"></param>
+        private void AggregateRem(Commit commit)
         {
-            foreach (var rem in changelog.Removed)
+            foreach (var rem in commit.Changelog.Removed)
             {
                 if (added.ContainsKey(rem))
                 {
@@ -155,11 +151,10 @@ namespace EChestVC.Model
         /// <summary>
         /// Aggregates all of changelog.Renamed
         /// </summary>
-        /// <param name="hash"></param>
-        /// <param name="changelog"></param>
-        private void AggregateRen(string hash, Changelog changelog)
+        /// <param name="commit"></param>
+        private void AggregateRen(Commit commit)
         {
-            foreach (var ren in changelog.Renamed)
+            foreach (var ren in commit.Changelog.Renamed)
             {
                 if (renamed.ContainsKey(ren.Key)) //if a rename to this key has already occurred
                 {
@@ -187,7 +182,7 @@ namespace EChestVC.Model
                     if (added.ContainsKey(ren.Value))
                     {
                         //rename added file and remove rename
-                        added.TryGetValue(ren.Value, out Tuple<string, string> old);
+                        added.TryGetValue(ren.Value, out Tuple<string, Commit> old);
                         added.Remove(ren.Value);
                         added.Add(ren.Key, old);
                         renamed.Remove(ren.Key);
@@ -195,7 +190,7 @@ namespace EChestVC.Model
                     else if (modified.ContainsKey(ren.Value))
                     {
                         //rename modified file
-                        modified.TryGetValue(ren.Value, out Tuple<string, string> old);
+                        modified.TryGetValue(ren.Value, out Tuple<string, Commit> old);
                         modified.Remove(ren.Value);
                         modified.Add(ren.Key, old);
                     }

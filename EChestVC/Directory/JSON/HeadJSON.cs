@@ -9,6 +9,7 @@ namespace EChestVC.Directory.JSON
     {
         private const string COMMIT = "Commit";
         private const string BRANCH = "Branch";
+        private const string UNINITIALIZED = "Uninitialized";
 
         public string TargetHash { get; set; }
         public string TargetType { get; set; }
@@ -22,6 +23,7 @@ namespace EChestVC.Directory.JSON
             {
             Head.Target.Branch => BRANCH,
             Head.Target.Commit => COMMIT,
+            Head.Target.Uninitialized => UNINITIALIZED,
             _ => throw new NotImplementedException("HeadJSON not updated with new values")
             };
         }
@@ -40,6 +42,9 @@ namespace EChestVC.Directory.JSON
             } else if (TargetType == BRANCH)
             {
                 throw new NotImplementedException("Update to include branch");
+            } else if (TargetType == UNINITIALIZED)
+            {
+                return new Head();
             } else
             {
                 throw new FormatException("Head must point to either a Commit or a Branch");

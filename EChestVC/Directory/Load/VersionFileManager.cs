@@ -75,11 +75,11 @@ namespace EChestVC.Directory.Load
         {
             var versions = new Dictionary<string, Version>();
             VersionBuilder builder = new VersionBuilder();
-            Action<Dictionary<string, Tuple<string, string>>> build = vals =>
+            Action<Dictionary<string, Tuple<string, Commit>>> build = vals =>
             {
                 foreach (var val in vals)
                 {
-                    string versionHash = val.Value.Item2;
+                    string versionHash = val.Value.Item2.Version.Hash;
                     Version v;
                     if (versions.ContainsKey(versionHash))
                     {
@@ -96,6 +96,10 @@ namespace EChestVC.Directory.Load
             };
             build(aggregated.Added);
             build(aggregated.Modified);
+            foreach (var pair in aggregated.Renamed)
+            {
+                builder.RenameVersionData(pair.Key, pair.Value);
+            }
             return builder.GetVersion();
         }
     }

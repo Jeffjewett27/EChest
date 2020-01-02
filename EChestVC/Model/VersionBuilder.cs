@@ -75,16 +75,7 @@ namespace EChestVC.Model
         public void AddVersionData(string path, VersionData vdata)
         {
             string[] directoryPath = VersionDataPath.SplitDirectories(path);
-            DataNode node = root;
-            for (int i = 0; i < directoryPath.Length - 1; i++)
-            {
-                string dir = directoryPath[i];
-                if (!node.children.Contains(dir))
-                {
-                    node.children.Add(new DataNode(dir));
-                }
-                node = node.children[dir];
-            }
+            DataNode node = GetParentNode(directoryPath);
             string filename = directoryPath[directoryPath.Length - 1];
             if (node.children.Contains(filename))
             {
@@ -95,6 +86,24 @@ namespace EChestVC.Model
             }
         }
 
+        public void RenameVersionData(string oldPath, string newPath)
+        {
+            string[] oldDirPath = VersionDataPath.SplitDirectories(oldPath);
+            string[] newDirPath = VersionDataPath.SplitDirectories(newPath);
+            DataNode parentNode = GetParentNode(oldDirPath);
+            string oldfilename = oldDirPath[oldDirPath.Length - 1];
+            string newfilename = newDirPath[newDirPath.Length - 1];
+            if (!parentNode.children.Contains(oldfilename))
+            {
+                throw new ArgumentException(oldPath + " does not exist");
+            }
+            DataNode node = parentNode.children[oldfilename];
+            node.filename = newfilename;
+            parentNode.children.Remove(node);
+            parentNode = GetParentNode(newDirPath);
+            parentNode.children.Add(node);
+        }
+
         /// <summary>
         /// Converts this to a Version
         /// </summary>
@@ -103,6 +112,21 @@ namespace EChestVC.Model
         {
             var vdata = GetDirectoryData(root);
             return new Version(vdata);
+        }
+
+        private DataNode GetParentNode(string[] directoryPath)
+        {
+            DataNode node = root;
+            for (int i = 0; i < directoryPath.Length - 1; i++)
+            {
+                string dir = directoryPath[i];
+                if (!node.children.Contains(dir))
+                {
+                    node.children.Add(new DataNode(dir));
+                }
+                node = node.children[dir];
+            }
+            return node;
         }
 
         /// <summary>
@@ -125,7 +149,7 @@ namespace EChestVC.Model
                 } else
                 {
                     var vd = childNode.data;
-                    children.Add(new VersionData(vd.Filename, vd.Data, vd.Hash));
+                    children.Add(new VersionData(childNode.filename, vd.Data, vd.Hash));
                 }
             }
             return new VersionData(node.filename, children);

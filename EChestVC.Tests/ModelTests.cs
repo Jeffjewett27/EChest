@@ -111,13 +111,6 @@ namespace EChestVC.Tests
             test = "";
             directory.CreateVersion(v);
         }
-
-        [TestMethod]
-        public void CommitCommand()
-        {
-            var command = new CommitCommand(@"C:\Users\jeffr\Documents\EChest\Big Blocks\Resource Packs\Format v3");
-            command.Create("my first test");
-        }
     }
 
     

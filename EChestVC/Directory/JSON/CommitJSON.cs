@@ -28,7 +28,7 @@ namespace EChestVC.Directory.JSON
         public CommitJSON(Commit commit)
         {
             Hash = commit.Hash;
-            Parents = commit.Parents.Select(p => p.Hash).ToArray();
+            Parents = commit.Parents.Where(p => p != null).Select(p => p.Hash).ToArray();
             Changelog = commit.Changelog.Hash;
             Version = commit.Version.Hash;
             Metadata = new CommitMetadataJSON(commit.Metadata);

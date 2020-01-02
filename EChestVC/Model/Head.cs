@@ -9,7 +9,8 @@ namespace EChestVC.Model
         public enum Target
         {
             Commit,
-            Branch
+            Branch,
+            Uninitialized
         }
         private Commit targetCommit;
         private Target targetType;
@@ -18,6 +19,12 @@ namespace EChestVC.Model
         {
             targetType = Target.Commit;
             this.targetCommit = targetCommit;
+        }
+
+        public Head()
+        {
+            targetType = Target.Uninitialized;
+            targetCommit = Commit.Null();
         }
 
         public Commit GetTarget()

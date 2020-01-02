@@ -30,6 +30,32 @@ namespace EChestVC.Directory.Load
             }
             headJSON = JsonSerializer.Deserialize<HeadJSON>(json);
             return headJSON.GetHead(directory);
-        } 
+        }
+
+        //TODO: fix
+        public static void UpdateHead(string filepath, Head head)
+        {
+            if (File.Exists(filepath))
+            {
+                throw new ArgumentException(filepath + " alread exists");
+            }
+            HeadJSON headJSON = new HeadJSON();
+            var options = JSONFileFormat.GetJsonSerializerOptions();
+            string json = JsonSerializer.Serialize<Head>(head, options);
+            File.WriteAllText(filepath, json);
+        }
+
+        public static void CreateHead(string filepath)
+        {
+            Head uninitializedHead = new Head();
+            HeadJSON headJSON = new HeadJSON(null, Head.Target.Uninitialized);
+            if (File.Exists(filepath))
+            {
+                throw new ArgumentException(filepath + " already exists");
+            }
+            var options = JSONFileFormat.GetJsonSerializerOptions();
+            string json = JsonSerializer.Serialize(headJSON, options);
+            File.WriteAllText(filepath, json);
+        }
     }
 }
