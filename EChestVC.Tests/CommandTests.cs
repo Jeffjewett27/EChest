@@ -13,7 +13,7 @@ namespace EChestVC.Tests
         public void CommitCommand()
         {
             var command = new CommitCommand(@"C:\Users\jeffr\Documents\EChest\Big Blocks\Resource Packs\FormatTest");
-            command.Create("my first test");
+            command.Create("checked out test_branch");
         }
 
         [TestMethod]
@@ -21,6 +21,20 @@ namespace EChestVC.Tests
         {
             var command = new InitializeCommand(@"C:\Users\jeffr\Documents\EChest\Big Blocks\Resource Packs\FormatTest");
             command.Initialize();
+        }
+
+        [TestMethod]
+        public void CheckoutCommand()
+        {
+            var command = new CheckoutCommand(@"C:\Users\jeffr\Documents\EChest\Big Blocks\Resource Packs\FormatTest");
+            command.Execute(ViewModel.CheckoutCommand.Type.Branch, "test_branch");
+        }
+
+        [TestMethod]
+        public void CreateBranchCommand()
+        {
+            var command = new BranchCommand(@"C:\Users\jeffr\Documents\EChest\Big Blocks\Resource Packs\FormatTest");
+            command.Create("test_branch2");
         }
     }
 }

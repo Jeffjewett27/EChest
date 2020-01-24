@@ -20,7 +20,7 @@ namespace EChestVC.Model
         public Branch TargetBranch {
             get
             {
-                if (targetType == Target.Branch)
+                if (targetType != Target.Branch)
                 {
                     throw new InvalidOperationException("Head must be of type Target.Branch");
                 }
@@ -41,7 +41,7 @@ namespace EChestVC.Model
         public Head(Branch targetBranch)
         {
             targetType = Target.Branch;
-            targetHash = targetBranch.Hash;
+            targetHash = targetBranch.Name;
             this.targetBranch = targetBranch;
         }
 

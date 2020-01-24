@@ -8,30 +8,17 @@ namespace EChestVC.Model
     {
         private Commit target;
         private BranchMetadata metadata;
-        private string hash;
+        private string name;
 
         public Commit Target => target;
         public BranchMetadata Metadata => metadata;
-        public string Hash => hash;
+        public string Name => name;
 
-        public Branch(Commit target, BranchMetadata metadata)
+        public Branch(Commit target, BranchMetadata metadata, string name)
         {
             this.target = target;
             this.metadata = metadata;
-            hash = GenerateHash();
-        }
-
-        public Branch(Commit target, BranchMetadata metadata, string hash)
-        {
-            this.target = target;
-            this.metadata = metadata;
-            this.hash = hash;
-        }
-
-        public string GenerateHash()
-        {
-            string hashString = target.Hash + metadata.Hash;
-            return Model.Hash.ComputeHash(hashString);
+            this.name = name;
         }
     }
 }

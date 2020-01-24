@@ -41,7 +41,8 @@ namespace EChestVC.Directory.JSON
                 return new Head(commit);
             } else if (TargetType == BRANCH)
             {
-                throw new NotImplementedException("Update to include branch");
+                Branch branch = directory.LoadBranch(TargetHash);
+                return new Head(branch);
             } else if (TargetType == UNINITIALIZED)
             {
                 return new Head();

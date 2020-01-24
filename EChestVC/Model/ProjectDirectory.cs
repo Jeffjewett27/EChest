@@ -138,7 +138,9 @@ namespace EChestVC.Model
                 directory.ChangeHead(commit);
             } else
             {
-                //directory.ChangeBranch
+                var branch = head.TargetBranch;
+                var newBranch = new Branch(commit, branch.Metadata, branch.Name);
+                directory.UpdateBranch(newBranch);
             }
         }
 
@@ -150,6 +152,26 @@ namespace EChestVC.Model
         public void ChangeHead(Branch branch)
         {
             directory.ChangeHead(branch);
+        }
+
+        public void CreateBranch(Branch branch)
+        {
+            directory.CreateBranch(branch);
+        }
+
+        public void UpdateBranch(Branch branch)
+        {
+            directory.UpdateBranch(branch);
+        }
+
+        public Branch LoadBranch(string name)
+        {
+            return directory.LoadBranch(name);
+        }
+
+        public void DeleteBranch(Branch branch)
+        {
+            directory.DeleteBranch(branch);
         }
     }
 }

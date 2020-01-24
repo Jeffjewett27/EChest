@@ -20,6 +20,8 @@ namespace EChestVC.Directory
         private const string COMMIT_EXT = ".json";
         private const string WORKING_PATH = "WorkingDirectory";
         private const string HEAD_PATH = "HEAD.json";
+        private const string BRANCH_PATH = "Branches";
+        private const string BRANCH_EXT = ".json";
         private readonly string path;
 
         /// <summary>
@@ -191,11 +193,12 @@ namespace EChestVC.Directory
         public void Initialize()
         {
             System.IO.Directory.CreateDirectory(path);
-            string[] subdirs = new string[4];
+            string[] subdirs = new string[5];
             subdirs[0] = Path.Combine(path, VERSION_PATH);
             subdirs[1] = Path.Combine(path, COMMIT_PATH);
             subdirs[2] = Path.Combine(path, CHANGELOG_PATH);
             subdirs[3] = Path.Combine(path, WORKING_PATH);
+            subdirs[4] = Path.Combine(path, BRANCH_PATH);
             foreach (string dirPath in subdirs)
             {
                 System.IO.Directory.CreateDirectory(dirPath);
@@ -214,6 +217,30 @@ namespace EChestVC.Directory
         {
             string headPath = Path.Combine(path, HEAD_PATH);
             HeadFileManager.ChangeHead(headPath, newBranch);
+        }
+
+        public void CreateBranch(Branch branch)
+        {
+            string branchpath = Path.Combine(path, BRANCH_PATH, branch.Name + BRANCH_EXT);
+            BranchFileManager.CreateBranch(branchpath, branch);
+        }
+
+        public void UpdateBranch(Branch branch)
+        {
+            string branchpath = Path.Combine(path, BRANCH_PATH, branch.Name + BRANCH_EXT);
+            BranchFileManager.UpdateBranch(branchpath, branch);
+        }
+
+        public Branch LoadBranch(string name)
+        {
+            string branchpath = Path.Combine(path, BRANCH_PATH, name + BRANCH_EXT);
+            return BranchFileManager.LoadBranch(branchpath, this);
+        }
+
+        public void DeleteBranch(Branch branch)
+        {
+            string branchpath = Path.Combine(path, BRANCH_PATH, branch.Name + BRANCH_EXT);
+            BranchFileManager.DeleteBranch(branchpath);
         }
     }
 }
