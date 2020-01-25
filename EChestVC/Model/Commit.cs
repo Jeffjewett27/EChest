@@ -14,17 +14,17 @@ namespace EChestVC.Model
         private readonly Version version;
         private readonly Commit[] parents;
         private readonly Changelog changelog;
-        private readonly CommitMetadata metadata;
+        private readonly Metadata metadata;
         private readonly bool isNull;
 
         public string Hash => commitHash;
-        public virtual CommitMetadata Metadata => metadata;
+        public virtual Metadata Metadata => metadata;
         public virtual Changelog Changelog => changelog;
         public virtual Commit[] Parents => parents;
         public virtual Version Version => version;
         public bool IsNull => isNull;
 
-        public Commit(Commit[] parents, Changelog changelog, Version version, CommitMetadata metadata)
+        public Commit(Commit[] parents, Changelog changelog, Version version, Metadata metadata)
         {
             this.parents = parents;
             this.changelog = changelog;
@@ -33,7 +33,7 @@ namespace EChestVC.Model
             commitHash = GenerateHash();
         }
 
-        public Commit(Commit[] parents, Changelog changelog, Version version, CommitMetadata metadata, string hash)
+        public Commit(Commit[] parents, Changelog changelog, Version version, Metadata metadata, string hash)
         {
             this.parents = parents;
             this.changelog = changelog;
@@ -42,7 +42,7 @@ namespace EChestVC.Model
             commitHash = hash;
         }
 
-        public Commit(Commit parent, Changelog changelog, Version version, CommitMetadata metadata)
+        public Commit(Commit parent, Changelog changelog, Version version, Metadata metadata)
         {
             parents = new Commit[] { parent };
             this.changelog = changelog;
@@ -51,7 +51,7 @@ namespace EChestVC.Model
             commitHash = GenerateHash();
         }
 
-        public Commit(Commit parent, Changelog changelog, Version version, CommitMetadata metadata, string hash)
+        public Commit(Commit parent, Changelog changelog, Version version, Metadata metadata, string hash)
         {
             parents = parent != null? new Commit[] { parent } : new Commit[0];
             this.changelog = changelog;
@@ -220,7 +220,7 @@ namespace EChestVC.Model
             {
                 sum.Append(s);
             }
-            sum.Append(Metadata.GetHash());
+            sum.Append(Metadata.Hash);
             return Model.Hash.ComputeHash(sum.ToString());
         }
     }

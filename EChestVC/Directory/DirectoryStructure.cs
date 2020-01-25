@@ -22,6 +22,8 @@ namespace EChestVC.Directory
         private const string HEAD_PATH = "HEAD.json";
         private const string BRANCH_PATH = "Branches";
         private const string BRANCH_EXT = ".json";
+        private const string BUILD_PATH = "Builds";
+        private const string BUILD_EXT = ".json";
         private readonly string path;
 
         /// <summary>
@@ -241,6 +243,24 @@ namespace EChestVC.Directory
         {
             string branchpath = Path.Combine(path, BRANCH_PATH, branch.Name + BRANCH_EXT);
             BranchFileManager.DeleteBranch(branchpath);
+        }
+
+        public void CreateBuild(Build build)
+        {
+            string buildpath = Path.Combine(path, BUILD_PATH, build.Hash, BUILD_EXT);
+            BuildFileManager.CreateBuild(buildpath, build);
+        }
+
+        public Build GetBuild(string hash)
+        {
+            string buildpath = Path.Combine(path, BUILD_PATH, hash, BUILD_EXT);
+            return BuildFileManager.LoadBuild(buildpath, this);
+        }
+
+        public void DeleteBuild(string hash)
+        {
+            string buildpath = Path.Combine(path, BUILD_PATH, hash, BUILD_EXT);
+            BuildFileManager.DeleteBuild(buildpath);
         }
     }
 }
